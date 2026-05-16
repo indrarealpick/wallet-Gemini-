@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Clarity - Dreamy Pastel Finance Tracker</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient-1: #C9A7FF;
+            --bg-gradient-2: #B8A8FF;
+            --bg-gradient-3: #F7C8E0;
+            --bg-gradient-4: #BDE7FF;
+            --bg-gradient-5: #FFF7FC;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg-pure: #ffffff;
+            --text-main: #4A3E65;
+            --text-sub: #8F84A7;
+            --pastel-purple: #B8A8FF;
+            --pastel-pink: #F7C8E0;
+            --pastel-blue: #BDE7FF;
+            --pastel-green: #BFF6C3;
+            --pastel-orange: #FFD4B2;
+            --radius-large: 32px;
+            --radius-medium: 20px;
+            --shadow-soft: 0 20px 40px rgba(160, 140, 210, 0.12);
+            --shadow-card: 0 15px 30px rgba(184, 168, 255, 0.15);
+            
+            /* RAHASIA TIMING TRANSISI ALA iOS (Fluid Spring Mimic) */
+            --ios-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ios-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+            --transition-smooth: all 0.5s var(--ios-ease-out);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Quicksand', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-5) 0%, var(--bg-gradient-4) 25%, var(--bg-gradient-3) 50%, var(--bg-gradient-1) 75%, var(--bg-gradient-2) 100%);
+            background-size: 400% 400%;
+            animation: meshGradient 20s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 120px;
+        }
+
+        @keyframes meshGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            padding: 24px 20px;
+            position: relative;
+        }
+
+        /* ANIMASI PERGANTIAN MENU ALA iOS (Slide + Fade) */
+        .app-view {
+            opacity: 0;
+            transform: translateY(16px) scale(0.98);
+            transition: opacity 0.45s var(--ios-ease-out), transform 0.45s var(--ios-ease-out);
+            display: none;
+            will-change: transform, opacity;
+        }
+
+        .app-view.view-visible {
+            display: block !important;
+        }
+
+        .app-view.view-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .floating-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: var(--radius-large);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 0 8px;
+        }
+
+        .user-greeting h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .user-greeting p {
+            font-size: 13px;
+            color: var(--text-sub);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .avatar-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #F7C8E0, #C9A7FF);
+            padding: 3px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .avatar-real {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.5) 100%);
+        }
+
+        .editable-balance {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+        .editable-balance:hover { opacity: 0.8; }
+        .editable-balance i { font-size: 16px; color: var(--pastel-purple); }
+
+        .balance-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            font-weight: 700;
+        }
+
+        .balance-amount {
+            font-size: 34px;
+            font-weight: 800;
+            margin: 8px 0;
+            color: var(--text-main);
+            letter-spacing: -1px;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(143, 132, 167, 0.15);
+            padding-top: 16px;
+        }
+
+        .flow-stat h4 {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .flow-stat p {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .flow-income { color: #68B984; }
+        .flow-expense { color: #FD8A8A; }
+
+        .textarea-pastel {
+            width: 100%;
+            height: 90px;
+            background: rgba(244, 241, 250, 0.7);
+            border: 2px solid transparent;
+            border-radius: var(--radius-medium);
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            resize: none;
+            transition: var(--transition-smooth);
+            margin-bottom: 16px;
+        }
+
+        .textarea-pastel:focus {
+            border-color: var(--pastel-purple);
+            background: var(--card-bg-pure);
+        }
+
+        /* FLOATING ACTION BUTTONS GROUP */
+        .fab-group {
+            position: fixed;
+            bottom: 105px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 850;
+        }
+
+        .fab-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(74, 62, 101, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .fab-btn:active { transform: scale(0.88); }
+        .fab-quick { background: linear-gradient(135deg, #A8B2FF 0%, #7B88FF 100%); }
+        .fab-income { background: linear-gradient(135deg, #86E3CE 0%, #68B984 100%); }
+        .fab-expense { background: linear-gradient(135deg, #FF9F9F 0%, #FD8A8A 100%); }
+
+        /* BUDGET & SAVINGS CARDS WITH ENTER/EXIT ANIMATIONS */
+        .budget-item-card {
+            background: var(--card-bg-pure);
+            border-radius: var(--radius-medium);
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 10px 25px rgba(160, 140, 210, 0.06);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: opacity 0.4s var(--ios-ease-out), transform 0.4s var(--ios-ease-out), max-height 0.4s var(--ios-ease-out), padding 0.4s var(--ios-ease-out), margin 0.4s var(--ios-ease-out);
+            max-height: 150px;
+            opacity: 1;
+            transform: scale(1);
+            overflow: hidden;
+            will-change: transform, opacity, max-height;
+        }
+
+        /* Animasi masuk untuk item baru */
+        .item-enter-active {
+            animation: iosListEnter 0.4s var(--ios-ease-out) forwards;
+        }
+
+        /* Animasi keluar saat item dihapus */
+        .item-leave-active {
+            opacity: 0 !important;
+            transform: scale(0.85) translateY(-10px) !important;
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-bottom: 0 !important;
+            border: none !important;
+        }
+
+        @keyframes iosListEnter {
+            from { opacity: 0; transform: scale(0.9) translateY(15px); max-height: 0; padding-top: 0; padding-bottom: 0; }
+            to { opacity: 1; transform: scale(1) translateY(0); max-height: 150px; }
+        }
+
+        .budget-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .budget-card-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 70%;
+        }
+
+        .budget-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .budget-action-icon-btn {
+            background: rgba(143, 132, 167, 0.08);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: transform 0.2s ease;
+        }
+        .budget-action-icon-btn:active { transform: scale(0.85); }
+
+        .budget-action-icon-btn.delete-trigger {
+            color: #FD8A8A;
+            background: rgba(253, 138, 138, 0.1);
+        }
+
+        .progress-bar-bg {
+            background: #F4F2F9;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.8s var(--ios-ease-out);
+        }
+
+        .progress-bar-fill.danger {
+            background: linear-gradient(90deg, #FF9F9F, #FD8A8A) !important;
+        }
+
+        /* MASTER LISTS */
+        .section-title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 0 4px;
+        }
+
+        .section-title { font-size: 16px; font-weight: 800; }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.6);
+            padding: 14px 16px;
+            border-radius: var(--radius-medium);
+            border: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+            transition: transform 0.4s var(--ios-ease-out), opacity 0.4s var(--ios-ease-out), max-height 0.4s var(--ios-ease-out), padding 0.4s var(--ios-ease-out), margin 0.4s var(--ios-ease-out);
+            max-height: 80px;
+            will-change: transform, opacity;
+        }
+
+        .item-left { display: flex; align-items: center; gap: 12px; width: 68%; }
+
+        .item-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .item-info { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+        .item-info h5 { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+        .item-info p { font-size: 11px; color: var(--text-sub); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; }
+        
+        .item-right-side {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: right;
+        }
+        .item-amount { font-size: 14px; font-weight: 800; white-space: nowrap; }
+
+        /* FORMS STRUCTURE */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            padding-left: 4px;
+        }
+
+        .input-pastel, .select-pastel {
+            width: 100%;
+            background: rgba(244, 241, 250, 0.7);
+            border: 2px solid transparent;
+            border-radius: var(--radius-medium);
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .input-pastel:focus, .select-pastel:focus {
+            border-color: var(--pastel-purple);
+            background: var(--card-bg-pure);
+        }
+
+        .color-palette-grid, .icon-palette-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .color-dot-option {
+            height: 38px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition-smooth);
+        }
+
+        .color-dot-option.active {
+            border-color: var(--text-main);
+            transform: scale(1.1);
+        }
+
+        .icon-box-option {
+            height: 38px;
+            background: #F4F1FA;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition-smooth);
+        }
+
+        .icon-box-option.active {
+            background: var(--text-main);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .btn-pastel-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pastel-purple) 0%, #a291fd 100%);
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: var(--radius-medium);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(184, 168, 255, 0.3);
+            transition: transform 0.2s ease;
+        }
+        .btn-pastel-primary:active { transform: scale(0.97); }
+
+        .btn-pastel-secondary {
+            width: 100%;
+            background: #F4F1FA;
+            color: var(--text-main);
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-medium);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s ease;
+        }
+        .btn-pastel-secondary:active { transform: scale(0.97); }
+
+        /* SAVINGS COMPONENT ELEMENTS */
+        .savings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .savings-action-btn {
+            border: none;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .savings-action-btn:active { transform: scale(0.95); }
+        .savings-action-btn.dep { background: rgba(134, 227, 206, 0.2); color: #449c87; }
+        .savings-action-btn.wth { background: rgba(255, 159, 159, 0.2); color: #d66565; }
+
+        /* MODAL ANIMATION MECHANISMS (iOS Native Modal Sheet Style) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(40, 30, 60, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+            transition: background-color 0.4s var(--ios-ease-out), backdrop-filter 0.4s var(--ios-ease-out);
+            will-change: background-color, backdrop-filter;
+        }
+
+        .modal-overlay.active { 
+            background: rgba(40, 30, 60, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            pointer-events: auto; 
+        }
+
+        .modal-sheet {
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.96);
+            border-top-left-radius: var(--radius-large);
+            border-top-right-radius: var(--radius-large);
+            padding: 30px 24px 40px 24px;
+            transform: translateY(100%);
+            transition: transform 0.45s cubic-bezier(0.15, 0.85, 0.35, 1);
+            max-height: 85vh;
+            overflow-y: auto;
+            will-change: transform;
+        }
+
+        .modal-overlay.active .modal-sheet { transform: translateY(0); }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .close-modal-btn {
+            background: rgba(143, 132, 167, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .close-modal-btn:active { transform: scale(0.85); }
+
+        /* NAVIGATION BAR WITH HIGHLIGHT SPRING EFFECT */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 390px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            box-shadow: 0 15px 35px rgba(160, 140, 210, 0.2);
+            z-index: 900;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 50px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25), background-color 0.3s, color 0.3s;
+        }
+
+        .nav-item.active { color: var(--text-main); }
+        .nav-item.active i {
+            background: var(--pastel-purple);
+            color: white;
+            transform: translateY(-6px) scale(1.1);
+            box-shadow: 0 8px 15px rgba(184, 168, 255, 0.4);
+        }
+
+        /* DIALOG POPUP ALA iOS ALERT */
+        .confirm-dialog-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(40, 30, 60, 0);
+            backdrop-filter: blur(0px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+        }
+        .confirm-dialog-overlay.active { 
+            background: rgba(40, 30, 60, 0.2);
+            backdrop-filter: blur(8px);
+            pointer-events: auto; 
+        }
+        .confirm-box {
+            background: rgba(255, 255, 255, 0.95);
+            width: 80%;
+            max-width: 290px;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transform: scale(1.2);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(0.15, 0.85, 0.35, 1.1), opacity 0.35s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .confirm-dialog-overlay.active .confirm-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .confirm-buttons { display: flex; gap: 10px; margin-top: 18px; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; font-size: 13px; font-weight: 700; border-radius: 12px; cursor: pointer; }
+        .confirm-btn.cancel { background: #F4F1FA; color: var(--text-sub); }
+        .confirm-btn.danger { background: #FD8A8A; color: white; }
+
+        .insight-badge {
+            background: rgba(184, 168, 255, 0.12);
+            border-left: 4px solid var(--pastel-purple);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header class="app-header">
+            <div class="user-greeting">
+                <h1 id="header-greeting">Good Evening, Indra</h1>
+                <p id="header-period">15 May 2026 - 15 June 2026</p>
+            </div>
+            <div class="avatar-wrap">
+                <div class="avatar-real"><i class="fa-solid fa-cat" style="color: #BAABDA;"></i></div>
+            </div>
+        </header>
+
+        <main id="view-home" class="app-view">
+            <div class="floating-card balance-card">
+                <div class="balance-title">Main Wallet Balance</div>
+                <div class="balance-amount editable-balance" onclick="openEditBalanceModal()" id="dash-balance">
+                    ¥0 <i class="fa-solid fa-pen-to-square"></i>
+                </div>
+                <div class="balance-grid">
+                    <div class="flow-stat">
+                        <h4>Total Income</h4>
+                        <p class="flow-income" id="dash-income">+¥0</p>
+                    </div>
+                    <div class="flow-stat">
+                        <h4>Expense</h4>
+                        <p class="flow-expense" id="dash-expense">-¥0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title-container" style="margin-top: 10px;">
+                <h3 class="section-title">Recent Logs</h3>
+                <a href="#" onclick="switchView('history')" style="font-size:12px; color:var(--pastel-purple); text-decoration:none; font-weight:700;">See All</a>
+            </div>
+            
+            <div class="floating-card" style="padding: 16px;">
+                <div id="dashboard-tx-list"></div>
+            </div>
+        </main>
+
+        <main id="view-analytics" class="app-view">
+            <div class="floating-card" style="background: linear-gradient(135deg, #FFF 0%, #F5F3FF 100%);">
+                <h4 style="font-size:14px; margin-bottom:12px; font-weight:800;">Core Analytics Engine</h4>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">
+                    <div><p style="color:var(--text-sub);">Wallets Asset Pool:</p><b id="an-allocated" style="font-size:15px;">¥0</b></div>
+                    <div><p style="color:var(--text-sub);">Main Unallocated:</p><b id="an-remaining" style="font-size:15px;">¥0</b></div>
+                    <div><p style="color:var(--text-sub);">Period Expenses:</p><b id="an-expenses" style="font-size:15px; color:#FD8A8A;">¥0</b></div>
+                    <div><p style="color:var(--text-sub);">Top Spending:</p><b id="an-top-spending" style="font-size:14px; color:var(--pastel-purple);">-</b></div>
+                </div>
+                <div class="insight-badge" id="analytics-smart-insight-box">Generating metrics...</div>
+            </div>
+            
+            <div class="floating-card">
+                <h3 class="section-title" style="margin-bottom: 16px;">Expense Distribution (By Category)</h3>
+                <div style="position: relative; height: 220px; width: 100%;">
+                    <canvas id="chartPie"></canvas>
+                </div>
+            </div>
+            <div class="floating-card">
+                <h3 class="section-title" style="margin-bottom: 16px;">Daily Trend (15 May - 15 June)</h3>
+                <div style="position: relative; height: 180px; width: 100%;">
+                    <canvas id="chartLine"></canvas>
+                </div>
+            </div>
+        </main>
+
+        <main id="view-budget" class="app-view">
+            <div class="section-title-container" style="margin-bottom: 16px;">
+                <h3 class="section-title">Wallets & Budgets Pool</h3>
+                <button class="input-pastel" style="width:auto; padding:8px 16px; font-size:12px;" onclick="openBudgetFormModal(null)">+ Create Wallet</button>
+            </div>
+            <div id="budget-master-container"></div>
+        </main>
+
+        <main id="view-savings" class="app-view">
+            <div class="section-title-container" style="margin-bottom: 16px;">
+                <h3 class="section-title">🔒 Safe Vault Savings</h3>
+                <button class="input-pastel" style="width:auto; padding:8px 16px; font-size:12px;" onclick="openSavingsFormModal()">+ New Goal</button>
+            </div>
+            <div id="savings-master-list"></div>
+        </main>
+
+        <main id="view-history" class="app-view">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                <input type="text" id="history-search" class="input-pastel" placeholder="🔍 Search notes..." oninput="renderHistoryView()">
+                <select id="history-filter-category" class="select-pastel" onchange="renderHistoryView()">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="floating-card" style="padding: 16px;">
+                <div id="history-master-list"></div>
+            </div>
+        </main>
+
+        <main id="view-settings" class="app-view">
+            <div class="floating-card">
+                <h3 class="section-title" style="margin-bottom: 16px;">Profile Management</h3>
+                <div class="form-group">
+                    <label>Profile Nickname</label>
+                    <input type="text" id="settings-username" class="input-pastel">
+                </div>
+                <button class="btn-pastel-primary" onclick="saveProfileSettings()">Update Profile</button>
+            </div>
+
+            <div class="floating-card">
+                <h3 class="section-title" style="margin-bottom: 12px;">Manage Expense Categories</h3>
+                <div style="display:flex; gap:8px; margin-bottom:16px;">
+                    <input type="text" id="new-category-input-name" class="input-pastel" style="padding:10px;" placeholder="New category name...">
+                    <button class="btn-pastel-primary" style="width:auto; padding:10px 16px; white-space:nowrap;" onclick="createNewCategoryFromSettings()">+ Add</button>
+                </div>
+                <div id="settings-category-list-container" style="max-height:200px; overflow-y:auto;"></div>
+            </div>
+
+            <div class="floating-card">
+                <h3 class="section-title" style="margin-bottom: 12px; font-size:14px; color:#FD8A8A;">Database Control Panel</h3>
+                <button class="btn-pastel-secondary" style="background:#EBF3FE; color:#3178F5;" onclick="backupDatabaseToJson()">
+                    <i class="fa-solid fa-file-export"></i> Backup Database (JSON)
+                </button>
+                <button class="btn-pastel-secondary" style="background:#E8FDF5; color:#0EA971;" onclick="triggerRestoreInputClick()">
+                    <i class="fa-solid fa-file-import"></i> Restore Database
+                </button>
+                <input type="file" id="restore-file-input" style="display:none;" accept=".json" onchange="restoreDatabaseFromJson(event)">
+                <button class="btn-pastel-secondary" style="background:#FFF0F0; color:#FD8A8A; margin-top:20px;" onclick="triggerResetSystemEngine()">
+                    <i class="fa-solid fa-power-off"></i> Reset Engine Parameters
+                </button>
+            </div>
+        </main>
+
+        <div class="fab-group">
+            <button class="fab-btn fab-quick" onclick="openQuickTypeModal()" title="Ketik Cepat">
+                <i class="fa-solid fa-pen-fancy"></i>
+            </button>
+            <button class="fab-btn fab-income" onclick="openTransactionModal('income')" title="Log Income">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <button class="fab-btn fab-expense" onclick="openTransactionModal('expense')" title="Log Expense">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" id="nav-home" onclick="switchView('home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
+            <div class="nav-item" id="nav-analytics" onclick="switchView('analytics')"><i class="fa-solid fa-chart-pie"></i><span>Charts</span></div>
+            <div class="nav-item" id="nav-budget" onclick="switchView('budget')"><i class="fa-solid fa-wallet"></i><span>Wallet</span></div>
+            <div class="nav-item" id="nav-savings" onclick="switchView('savings')"><i class="fa-solid fa-vault"></i><span>Savings</span></div>
+            <div class="nav-item" id="nav-history" onclick="switchView('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></div>
+            <div class="nav-item" id="nav-settings" onclick="switchView('settings')"><i class="fa-solid fa-gear"></i><span>Settings</span></div>
+        </nav>
+
+        <div class="modal-overlay" id="modal-edit-balance" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>💰 Adjust Main Wallet Balance</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 24px; font-weight:800; color: var(--text-main);">¥</span>
+                    <input type="number" id="form-edit-balance-input" style="border:none; border-bottom:2px solid var(--pastel-purple); font-size:32px; font-weight:800; width:70%; text-align:center; outline:none; color:var(--text-main);">
+                </div>
+                <button class="btn-pastel-primary" onclick="handleSaveDirectBalance()">Overwrite Balance Amount</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-quick-type" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>✍️ Ketik Cepat Instan</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <textarea id="quick-input-text" class="textarea-pastel" placeholder="Contoh: Jajan boba rasa strawberry di paypay 1500"></textarea>
+                
+                <div class="form-group">
+                    <label>Potong Dari Wallet Mana?</label>
+                    <select id="quick-wallet-select" class="select-pastel"></select>
+                </div>
+
+                <button class="btn-pastel-primary" style="background: linear-gradient(135deg, #7B88FF 0%, #A8B2FF 100%); margin-top:10px;" onclick="executeQuickNlpDetection()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Deteksi & Proses Transaksi
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-savings-create" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>🎯 Create New Savings Goal</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="form-group"><label>Savings Name</label><input type="text" id="form-sv-name" class="input-pastel" placeholder="e.g. Beli Laptop, Liburan"></div>
+                <div class="form-group"><label>Target Goal Amount (¥)</label><input type="number" id="form-sv-target" class="input-pastel" placeholder="0"></div>
+                <button class="btn-pastel-primary" onclick="handleCreateSavingsGoal()">Deploy Saving Goal</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-savings-action" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <i class="fa-solid fa-repeat"></i> <h3 id="savings-modal-title">Deposit / Withdraw Savings</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="hidden" id="form-savings-id">
+                <input type="hidden" id="form-savings-mode">
+                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 24px; font-weight:800; color: var(--text-main);">¥</span>
+                    <input type="number" id="savings-action-amount" placeholder="0" style="border:none; border-bottom:2px solid var(--pastel-purple); font-size:32px; font-weight:800; width:60%; text-align:center; outline:none; color:var(--text-main);">
+                </div>
+                <button class="btn-pastel-primary" onclick="handleExecuteSavingsTransaction()">Confirm Safe Vault Allocation</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-budget-form" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3 id="budget-modal-title">Create Wallet</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="hidden" id="form-budget-id">
+                <div class="form-group">
+                    <label>Wallet / Budget Pool Name</label>
+                    <input type="text" id="form-budget-name" class="input-pastel" placeholder="e.g. Cash, Bank Mandiri, PayPay">
+                </div>
+                <div class="form-group">
+                    <label>Starting Allocated Balance (¥)</label>
+                    <input type="number" id="form-budget-limit" class="input-pastel" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Pick Aesthetic Pastel Color</label>
+                    <div class="color-palette-grid" id="form-color-grid"></div>
+                </div>
+                <div class="form-group">
+                    <label>Pick Micro Icon Descriptor</label>
+                    <div class="icon-palette-grid" id="form-icon-grid"></div>
+                </div>
+                <button class="btn-pastel-primary" style="margin-top:14px;" onclick="handleSaveBudgetPayload()">Authorize Wallet Parameter</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-transaction" onclick="closeActiveModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3 id="tx-modal-title">Log Core Parameter</h3>
+                    <button class="close-modal-btn" onclick="closeAllModals()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 24px; font-weight:800; color: var(--text-main);">¥</span>
+                    <input type="number" id="tx-amount" placeholder="0" style="border:none; border-bottom:2px solid var(--pastel-purple); font-size:32px; font-weight:800; width:60%; text-align:center; outline:none; color:var(--text-main);">
+                </div>
+
+                <div class="form-group">
+                    <label id="tx-wallet-label">Target Wallet (Sumber Uang)</label>
+                    <select id="tx-wallet-select" class="select-pastel"></select>
+                </div>
+
+                <div class="form-group" id="tx-category-group-container">
+                    <label>Target Category (Jenis Pengeluaran)</label>
+                    <select id="tx-category-select" class="select-pastel" onchange="toggleCustomCategoryField()"></select>
+                    <input type="text" id="tx-custom-category-input" class="input-pastel hidden" placeholder="Ketik nama kategori kustom baru..." style="margin-top: 8px;">
+                </div>
+
+                <div class="form-group">
+                    <label>Memo/Notes (Optional)</label>
+                    <input type="text" id="tx-note" class="input-pastel" placeholder="e.g. Ramen Feast, Steam Wallet">
+                </div>
+                <button class="btn-pastel-primary" onclick="handleSaveTransaction()">Secure Log Parameter</button>
+            </div>
+        </div>
+
+        <div class="confirm-dialog-overlay" id="confirm-delete-dialog">
+            <div class="confirm-box">
+                <h4 style="font-weight:800;">Delete Wallet?</h4>
+                <p style="font-size:13px; color:var(--text-sub); margin-top:6px;">Sisa uang dalam dompet ini akan otomatis dikembalikan ke Main Balance.</p>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn cancel" onclick="closeConfirmDelete()">Cancel</button>
+                    <button class="confirm-btn danger" id="confirm-delete-execute-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="confirm-dialog-overlay" id="confirm-delete-tx-dialog">
+            <div class="confirm-box">
+                <h4 style="font-weight:800;">Hapus Log Transaksi?</h4>
+                <p style="font-size:13px; color:var(--text-sub); margin-top:6px;">Saldo dompet yang berkaitan akan dikembalikan otomatis sesuai riwayat.</p>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn cancel" onclick="closeConfirmTxDelete()">Cancel</button>
+                    <button class="confirm-btn danger" id="confirm-delete-tx-execute-btn">Hapus</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let appState = {
+            user: "Indra",
+            mainBalance: 50000, 
+            budgets: [],       
+            categories: [],    
+            savings: [],
+            transactions: []   
+        };
+
+        const presetColors = ["#F7C8E0", "#C9A7FF", "#BDE7FF", "#BFF6C3", "#FFD4B2", "#FFEAA7", "#FFB6B6", "#A8E6CF"];
+        const presetIcons = ["fa-wallet", "fa-money-bill-wave", "fa-building-columns", "fa-credit-card", "fa-piggy-bank", "fa-utensils", "fa-basket-shopping", "fa-train"];
+
+        let pieChartInstance = null;
+        let lineChartInstance = null;
+        
+        let selectedFormColor = presetColors[0];
+        let selectedFormIcon = presetIcons[0];
+        let activeTxType = 'expense';
+        let pendingDeleteBudgetId = null;
+        let pendingDeleteTxId = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeStorageEngine();
+            renderHeaderUI();
+            buildFormPalettes();
+            switchView('home');
+        });
+
+        function initializeStorageEngine() {
+            const localData = localStorage.getItem('clarity_envelope_engine_v5');
+            if (localData) {
+                try { 
+                    appState = JSON.parse(localData); 
+                    if (!appState.categories || appState.categories.length === 0) {
+                        populateDefaultCategories();
+                    }
+                } catch(e) { 
+                    loadInitialDummyDataset(); 
+                }
+            } else { 
+                loadInitialDummyDataset(); 
+            }
+        }
+
+        function populateDefaultCategories() {
+            appState.categories = [
+                { id: "c1", name: "Makan", color: "#F7C8E0" },
+                { id: "c2", name: "Listrik", color: "#C9A7FF" },
+                { id: "c3", name: "Air", color: "#BDE7FF" },
+                { id: "c4", name: "Transportasi", color: "#BFF6C3" },
+                { id: "c5", name: "Nongkrong", color: "#FFD4B2" },
+                { id: "c6", name: "Gaming", color: "#FFEAA7" },
+                { id: "c7", name: "Skincare", color: "#FFB6B6" }
+            ];
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('clarity_envelope_engine_v5', JSON.stringify(appState));
+        }
+
+        function loadInitialDummyDataset() {
+            appState.mainBalance = 25000; 
+            appState.budgets = [
+                { id: "w1", name: "Cash", allocated: 50000, icon: "fa-wallet", color: "#BDE7FF" },
+                { id: "w2", name: "Bank Mandiri", allocated: 120000, icon: "fa-building-columns", color: "#C9A7FF" },
+                { id: "w3", name: "PayPay", allocated: 15000, icon: "fa-credit-card", color: "#F7C8E0" }
+            ];
+            populateDefaultCategories();
+            appState.savings = [
+                { id: "s1", name: "Tiket Konser", target: 50000, current: 12000, icon: "fa-music" }
+            ];
+            appState.transactions = [
+                { id: "tx_init_1", type: "expense", amount: 1200, walletId: "w1", categoryId: "c1", note: "Makan siang ramen", date: new Date(2026, 4, 16).toISOString() },
+                { id: "tx_init_2", type: "expense", amount: 5000, walletId: "w2", categoryId: "c2", note: "Tagihan listrik Mei", date: new Date(2026, 4, 17).toISOString() }
+            ];
+            saveToStorage();
+        }
+
+        function renderHeaderUI() {
+            document.getElementById('header-greeting').innerText = `Good Evening, ${appState.user}`;
+            document.getElementById('settings-username').value = appState.user;
+            
+            const filterSelect = document.getElementById('history-filter-category');
+            filterSelect.innerHTML = '<option value="">All Categories</option>';
+            appState.categories.forEach(cat => {
+                filterSelect.insertAdjacentHTML('beforeend', `<option value="${cat.id}">${cat.name}</option>`);
+            });
+        }
+
+        /* ENGINE NAVIGASI BARU DENGAN COGNITIVE DELAY ALA INTERAKSI FISIK iOS */
+        function switchView(viewTarget) {
+            const allViews = document.querySelectorAll('.app-view');
+            const targetView = document.getElementById(`view-${viewTarget}`);
+            const currentActiveView = document.querySelector('.app-view.view-active');
+            
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.getElementById(`nav-${viewTarget}`).classList.add('active');
+
+            if (currentActiveView && currentActiveView !== targetView) {
+                // Fade out view saat ini terlebih dahulu
+                currentActiveView.classList.remove('view-active');
+                setTimeout(() => {
+                    currentActiveView.classList.remove('view-visible');
+                    
+                    // Nyalakan view target baru
+                    targetView.classList.add('view-visible');
+                    // Menggunakan requestAnimationFrame agar browser sempat mendaftarkan perubahan display
+                    requestAnimationFrame(() => {
+                        targetView.classList.add('view-active');
+                    });
+                }, 150); // Kecepatan dismiss iOS yang responsif
+            } else {
+                allViews.forEach(v => {
+                    v.classList.remove('view-active');
+                    v.classList.remove('view-visible');
+                });
+                targetView.classList.add('view-visible');
+                requestAnimationFrame(() => {
+                    targetView.classList.add('view-active');
+                });
+            }
+            
+            // Render muatan data internal masing-masing view
+            setTimeout(() => {
+                if(viewTarget === 'home') renderDashboardView();
+                if(viewTarget === 'analytics') renderAnalyticsView();
+                if(viewTarget === 'budget') renderBudgetView();
+                if(viewTarget === 'savings') renderSavingsView();
+                if(viewTarget === 'history') renderHistoryView();
+                if(viewTarget === 'settings') renderSettingsCategoryManager();
+            }, 50);
+        }
+
+        function formatCurrency(num) {
+            return '¥' + Number(num).toLocaleString('en-US');
+        }
+
+        function openEditBalanceModal() {
+            document.getElementById('form-edit-balance-input').value = appState.mainBalance;
+            document.getElementById('modal-edit-balance').classList.add('active');
+        }
+
+        function handleSaveDirectBalance() {
+            const val = Number(document.getElementById('form-edit-balance-input').value);
+            if (isNaN(val) || val < 0) return;
+            appState.mainBalance = val;
+            saveToStorage();
+            closeAllModals();
+            renderDashboardView();
+        }
+
+        function renderDashboardView() {
+            let overallIncomeLogs = appState.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+            let totalMonthlyExpense = appState.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+
+            document.getElementById('dash-balance').innerHTML = `${formatCurrency(appState.mainBalance)} <i class="fa-solid fa-pen-to-square" style="font-size:14px; margin-left:4px; color:var(--text-sub);"></i>`;
+            document.getElementById('dash-income').innerText = `+${formatCurrency(overallIncomeLogs)}`;
+            document.getElementById('dash-expense').innerText = `-${formatCurrency(totalMonthlyExpense)}`;
+
+            const targetListGrid = document.getElementById('dashboard-tx-list');
+            targetListGrid.innerHTML = '';
+            const sortedTx = [...appState.transactions].reverse().slice(0, 4);
+
+            if(sortedTx.length === 0) {
+                targetListGrid.innerHTML = `<p style="font-size:13px; color:var(--text-sub); text-align:center; padding:15px 0;">Belum ada log transaksi.</p>`;
+                return;
+            }
+
+            sortedTx.forEach(tx => {
+                let sourceWalletName = "Main Wallet Pool";
+                let matchedWallet = appState.budgets.find(w => w.id === tx.walletId);
+                if (matchedWallet) sourceWalletName = matchedWallet.name;
+
+                let displaySub = sourceWalletName;
+                let catColor = "#BDE7FF";
+                let catIcon = "fa-basket-shopping";
+
+                if (tx.type === 'expense') {
+                    let matchedCat = appState.categories.find(c => c.id === tx.categoryId);
+                    if(matchedCat) {
+                        displaySub = `${sourceWalletName} • ${matchedCat.name}`;
+                        catColor = matchedCat.color || "#C9A7FF";
+                    }
+                } else {
+                    catColor = "#BFF6C3";
+                    catIcon = "fa-money-bill-wave";
+                }
+
+                targetListGrid.insertAdjacentHTML('beforeend', `
+                    <div class="list-item item-enter-active">
+                        <div class="item-left">
+                            <div class="item-icon" style="background:${catColor}40; color:var(--text-main);"><i class="fa-solid ${catIcon}"></i></div>
+                            <div class="item-info"><h5>${tx.note}</h5><p>${displaySub} • ${new Date(tx.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}</p></div>
+                        </div>
+                        <div class="item-amount" style="color:${tx.type === 'income' ? '#68B984' : 'var(--text-main)'}">
+                            ${tx.type === 'income' ? '+' : '-'}${formatCurrency(tx.amount)}
+                        </div>
+                    </div>`);
+            });
+        }
+
+        function renderBudgetView() {
+            const container = document.getElementById('budget-master-container');
+            container.innerHTML = '';
+
+            if (appState.budgets.length === 0) {
+                container.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:30px 0;">Belum ada wallet kustom dibuat.</p>`;
+                return;
+            }
+
+            appState.budgets.forEach(wallet => {
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="budget-item-card item-enter-active" id="wallet-card-${wallet.id}">
+                        <div class="budget-card-header" style="margin-bottom:0;">
+                            <div class="budget-card-left">
+                                <div class="item-icon" style="background:${wallet.color}40; color:var(--text-main);"><i class="fa-solid ${wallet.icon}"></i></div>
+                                <div class="item-info">
+                                    <h5 style="font-size:15px; font-weight:800;">${wallet.name}</h5>
+                                    <p style="font-size:14px; font-weight:700; color:var(--text-main); margin-top:2px;">${formatCurrency(wallet.allocated)}</p>
+                                </div>
+                            </div>
+                            <div class="budget-card-actions">
+                                <button class="budget-action-icon-btn" onclick="openBudgetFormModal('${wallet.id}')"><i class="fa-solid fa-pen" style="font-size:11px;"></i></button>
+                                <button class="budget-action-icon-btn delete-trigger" onclick="triggerDeleteConfirmation('${wallet.id}')"><i class="fa-solid fa-trash-can" style="font-size:11px;"></i></button>
+                            </div>
+                        </div>
+                    </div>`);
+            });
+        }
+
+        function openBudgetFormModal(id = null) {
+            if(id) {
+                const b = appState.budgets.find(x => x.id === id);
+                document.getElementById('budget-modal-title').innerText = "Modify Wallet Asset";
+                document.getElementById('form-budget-id').value = b.id;
+                document.getElementById('form-budget-name').value = b.name;
+                document.getElementById('form-budget-limit').value = b.allocated;
+            } else {
+                document.getElementById('budget-modal-title').innerText = "Create Wallet Pool";
+                document.getElementById('form-budget-id').value = '';
+                document.getElementById('form-budget-name').value = '';
+                document.getElementById('form-budget-limit').value = '';
+            }
+            document.getElementById('modal-budget-form').classList.add('active');
+        }
+
+        function handleSaveBudgetPayload() {
+            const name = document.getElementById('form-budget-name').value.trim();
+            const valueAmt = Number(document.getElementById('form-budget-limit').value);
+            const id = document.getElementById('form-budget-id').value;
+
+            if(!name || valueAmt < 0) return;
+
+            if(id) {
+                const idx = appState.budgets.findIndex(b => b.id === id);
+                if(idx !== -1) {
+                    appState.budgets[idx].name = name;
+                    appState.budgets[idx].allocated = valueAmt;
+                }
+            } else {
+                appState.budgets.push({ id: "w_" + Date.now(), name, allocated: valueAmt, icon: selectedFormIcon, color: selectedFormColor });
+            }
+
+            saveToStorage(); 
+            closeAllModals(); 
+            renderBudgetView();
+        }
+
+        function triggerDeleteConfirmation(id) {
+            pendingDeleteBudgetId = id;
+            document.getElementById('confirm-delete-dialog').classList.add('active');
+        }
+
+        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK WALLET
+        document.getElementById('confirm-delete-execute-btn').onclick = () => {
+            const targetEl = document.getElementById(`wallet-card-${pendingDeleteBudgetId}`);
+            document.getElementById('confirm-delete-dialog').classList.remove('active'); 
+            
+            if (targetEl) {
+                targetEl.classList.remove('item-enter-active');
+                targetEl.classList.add('item-leave-active');
+                
+                setTimeout(() => {
+                    const w = appState.budgets.find(x => x.id === pendingDeleteBudgetId);
+                    if(w) appState.mainBalance += Number(w.allocated);
+                    appState.budgets = appState.budgets.filter(b => b.id !== pendingDeleteBudgetId);
+                    saveToStorage(); 
+                    renderBudgetView();
+                }, 400); // Sinkron dengan durasi CSS leave transition
+            }
+        };
+
+        function closeConfirmDelete() { document.getElementById('confirm-delete-dialog').classList.remove('active'); }
+
+        function renderSettingsCategoryManager() {
+            renderHeaderUI();
+            const container = document.getElementById('settings-category-list-container');
+            container.innerHTML = '';
+
+            appState.categories.forEach(cat => {
+                container.insertAdjacentHTML('beforeend', `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#F8F6FC; padding:10px 14px; border-radius:12px; margin-bottom:8px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="width:12px; height:12px; border-radius:50%; background:${cat.color || '#A8B2FF'}"></span>
+                            <span style="font-size:13px; font-weight:700;">${cat.name}</span>
+                        </div>
+                        <button class="budget-action-icon-btn delete-trigger" onclick="deleteCategoryParam('${cat.id}')" style="width:26px; height:26px;"><i class="fa-solid fa-trash-can" style="font-size:10px;"></i></button>
+                    </div>`);
+            });
+        }
+
+        function createNewCategoryFromSettings() {
+            const name = document.getElementById('new-category-input-name').value.trim();
+            if(!name) return;
+
+            let randomPastel = presetColors[Math.floor(Math.random() * presetColors.length)];
+            appState.categories.push({
+                id: "c_" + Date.now(),
+                name: name,
+                color: randomPastel
+            });
+            
+            document.getElementById('new-category-input-name').value = '';
+            saveToStorage();
+            renderSettingsCategoryManager();
+        }
+
+        function deleteCategoryParam(id) {
+            appState.categories = appState.categories.filter(c => c.id !== id);
+            saveToStorage();
+            renderSettingsCategoryManager();
+        }
+
+        function toggleCustomCategoryField() {
+            const catSelect = document.getElementById('tx-category-select');
+            const customInput = document.getElementById('tx-custom-category-input');
+            if (catSelect.value === 'ADD_NEW_CUSTOM') {
+                customInput.classList.remove('hidden');
+                customInput.focus();
+            } else {
+                customInput.classList.add('hidden');
+            }
+        }
+
+        function openTransactionModal(type) {
+            activeTxType = type;
+            document.getElementById('tx-amount').value = '';
+            document.getElementById('tx-note').value = '';
+            
+            const walletSelect = document.getElementById('tx-wallet-select');
+            walletSelect.innerHTML = '<option value="main">Main Wallet Balance</option>';
+            appState.budgets.forEach(w => {
+                walletSelect.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name} (${formatCurrency(w.allocated)})</option>`);
+            });
+
+            const catSelect = document.getElementById('tx-category-select');
+            const catContainer = document.getElementById('tx-category-group-container');
+            document.getElementById('tx-custom-category-input').classList.add('hidden');
+            document.getElementById('tx-custom-category-input').value = '';
+
+            if (type === 'expense') {
+                document.getElementById('tx-modal-title').innerText = "Log Core Expense Parameter";
+                document.getElementById('tx-wallet-label').innerText = "Wallet / Budget Pool Source";
+                catContainer.classList.remove('hidden');
+                
+                catSelect.innerHTML = '';
+                appState.categories.forEach(c => {
+                    catSelect.insertAdjacentHTML('beforeend', `<option value="${c.id}">${c.name}</option>`);
+                });
+                catSelect.insertAdjacentHTML('beforeend', `<option value="ADD_NEW_CUSTOM" style="font-weight:bold; color:var(--pastel-purple);">+ Tambah Kategori Baru</option>`);
+            } else {
+                document.getElementById('tx-modal-title').innerText = "Log Main Pool Income";
+                document.getElementById('tx-wallet-label').innerText = "Destination Wallet Target";
+                catContainer.classList.add('hidden');
+            }
+
+            document.getElementById('modal-transaction').classList.add('active');
+        }
+
+        function handleSaveTransaction() {
+            const amt = Number(document.getElementById('tx-amount').value);
+            if (amt <= 0) return;
+
+            const selectedWalletId = document.getElementById('tx-wallet-select').value;
+            let selectedCategoryId = document.getElementById('tx-category-select').value;
+            let memo = document.getElementById('tx-note').value.trim();
+
+            if (activeTxType === 'expense') {
+                if (selectedCategoryId === 'ADD_NEW_CUSTOM') {
+                    const customCatName = document.getElementById('tx-custom-category-input').value.trim();
+                    if (!customCatName) {
+                        alert("⚠️ Harap isi nama kategori kustom Anda!");
+                        return;
+                    }
+                    
+                    let existCat = appState.categories.find(c => c.name.toLowerCase() === customCatName.toLowerCase());
+                    if (existCat) {
+                        selectedCategoryId = existCat.id;
+                    } else {
+                        const newCatId = "c_" + Date.now();
+                        let randomPastel = presetColors[Math.floor(Math.random() * presetColors.length)];
+                        appState.categories.push({
+                            id: newCatId,
+                            name: customCatName,
+                            color: randomPastel
+                        });
+                        selectedCategoryId = newCatId;
+                    }
+                }
+                
+                if (selectedWalletId === 'main') {
+                    if (appState.mainBalance < amt) { alert("⚠️ Insufficient asset inside Main Balance"); return; }
+                    appState.mainBalance -= amt;
+                } else {
+                    let wIdx = appState.budgets.findIndex(w => w.id === selectedWalletId);
+                    if (wIdx !== -1) {
+                        if (appState.budgets[wIdx].allocated < amt) { alert("⚠️ Insufficient asset inside target custom wallet"); return; }
+                        appState.budgets[wIdx].allocated -= amt;
+                    }
+                }
+                if (!memo) memo = "🛍 Easton Log";
+            } else {
+                if (selectedWalletId === 'main') {
+                    appState.mainBalance += amt;
+                } else {
+                    let wIdx = appState.budgets.findIndex(w => w.id === selectedWalletId);
+                    if (wIdx !== -1) appState.budgets[wIdx].allocated += amt;
+                }
+                if (!memo) memo = "💰 Income Feed";
+            }
+
+            appState.transactions.push({
+                id: "tx_" + Date.now(),
+                type: activeTxType,
+                amount: amt,
+                walletId: selectedWalletId,
+                categoryId: activeTxType === 'expense' ? selectedCategoryId : null,
+                note: memo,
+                date: new Date().toISOString()
+            });
+
+            saveToStorage();
+            closeAllModals();
+            renderDashboardView();
+        }
+
+        function renderHistoryView() {
+            const search = document.getElementById('history-search').value.toLowerCase();
+            const filterCat = document.getElementById('history-filter-category').value;
+            const list = document.getElementById('history-master-list');
+            list.innerHTML = '';
+
+            let filtered = appState.transactions.filter(t => {
+                let matchesSearch = t.note.toLowerCase().includes(search) || t.amount.toString().includes(search);
+                let matchesCat = true;
+                if(t.type === 'expense' && filterCat) {
+                    matchesCat = (t.categoryId === filterCat);
+                } else if(t.type === 'income' && filterCat) {
+                    matchesCat = false; 
+                }
+                return matchesSearch && matchesCat;
+            });
+
+            if(filtered.length === 0) {
+                list.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:10px 0;">Logs empty.</p>';
+                return;
+            }
+
+            filtered.reverse().forEach(tx => {
+                let walletLabel = tx.walletId === 'main' ? "Main Wallet" : "Custom Wallet";
+                let matchedW = appState.budgets.find(w => w.id === tx.walletId);
+                if(matchedW) walletLabel = matchedW.name;
+
+                let descriptorSub = walletLabel;
+                let catColor = "#BDE7FF";
+                let catIcon = "fa-basket-shopping";
+
+                if (tx.type === 'expense') {
+                    let matchedC = appState.categories.find(c => c.id === tx.categoryId);
+                    if(matchedC) {
+                        descriptorSub = `[${walletLabel}] ➔ ${matchedC.name}`;
+                        catColor = matchedC.color || "#C9A7FF";
+                    }
+                } else {
+                    catColor = "#BFF6C3";
+                    catIcon = "fa-money-bill-wave";
+                }
+
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="list-item item-enter-active" id="tx-item-${tx.id}">
+                        <div class="item-left">
+                            <div class="item-icon" style="background:${catColor}40; color:var(--text-main);"><i class="fa-solid ${catIcon}"></i></div>
+                            <div class="item-info">
+                                <h5>${tx.note}</h5>
+                                <p>${descriptorSub} • ${new Date(tx.date).toLocaleDateString('id-ID')}</p>
+                            </div>
+                        </div>
+                        <div class="item-right-side">
+                            <div class="item-amount" style="color:${tx.type==='income'?'#68B984':'var(--text-main)'}">
+                                ${tx.type==='income'?'+':'-'}${formatCurrency(tx.amount)}
+                            </div>
+                            <button class="budget-action-icon-btn delete-trigger" onclick="triggerTxDeleteConfirmation('${tx.id}')" style="width:26px; height:26px;">
+                                <i class="fa-solid fa-trash-can" style="font-size:10px;"></i>
+                            </button>
+                        </div>
+                    </div>`);
+            });
+        }
+
+        function triggerTxDeleteConfirmation(txId) {
+            pendingDeleteTxId = txId;
+            document.getElementById('confirm-delete-tx-dialog').classList.add('active');
+        }
+
+        function closeConfirmTxDelete() {
+            document.getElementById('confirm-delete-tx-dialog').classList.remove('active');
+            pendingDeleteTxId = null;
+        }
+
+        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK LOG RIWAYAT
+        document.getElementById('confirm-delete-tx-execute-btn').onclick = () => {
+            if (!pendingDeleteTxId) return;
+            const targetEl = document.getElementById(`tx-item-${pendingDeleteTxId}`);
+            document.getElementById('confirm-delete-tx-dialog').classList.remove('active');
+            
+            if (targetEl) {
+                targetEl.classList.remove('item-enter-active');
+                targetEl.classList.add('item-leave-active');
+                
+                setTimeout(() => {
+                    const txIdx = appState.transactions.findIndex(t => t.id === pendingDeleteTxId);
+                    if (txIdx !== -1) {
+                        const tx = appState.transactions[txIdx];
+                        if (tx.type === 'expense') {
+                            if (tx.walletId === 'main') appState.mainBalance += Number(tx.amount);
+                            else {
+                                let wIdx = appState.budgets.findIndex(w => w.id === tx.walletId);
+                                if (wIdx !== -1) appState.budgets[wIdx].allocated += Number(tx.amount);
+                            }
+                        } else {
+                            if (tx.walletId === 'main') appState.mainBalance -= Number(tx.amount);
+                            else {
+                                let wIdx = appState.budgets.findIndex(w => w.id === tx.walletId);
+                                if (wIdx !== -1) appState.budgets[wIdx].allocated -= Number(tx.amount);
+                            }
+                        }
+                        appState.transactions.splice(txIdx, 1);
+                        saveToStorage();
+                    }
+                    pendingDeleteTxId = null;
+                    renderHistoryView();
+                }, 400); // Sinkron dengan durasi CSS leave transition
+            }
+        };
+
+        function renderAnalyticsView() {
+            let totalWalletsPoolSum = appState.budgets.reduce((sum, b) => sum + Number(b.allocated), 0);
+            let totalSpent = appState.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            
+            document.getElementById('an-allocated').innerText = formatCurrency(totalWalletsPoolSum);
+            document.getElementById('an-remaining').innerText = formatCurrency(appState.mainBalance);
+            document.getElementById('an-expenses').innerText = formatCurrency(totalSpent);
+
+            let catMap = {};
+            appState.categories.forEach(c => catMap[c.id] = 0);
+            appState.transactions.filter(t => t.type === 'expense').forEach(t => {
+                if(catMap[t.categoryId] !== undefined) catMap[t.categoryId] += Number(t.amount);
+            });
+
+            let topCatName = "-"; let topValue = 0;
+            appState.categories.forEach(c => {
+                if (catMap[c.id] > topValue) {
+                    topValue = catMap[c.id];
+                    topCatName = c.name;
+                }
+            });
+
+            document.getElementById('an-top-spending').innerText = topValue > 0 ? `${topCatName}` : "-";
+            
+            const summaryBox = document.getElementById('analytics-smart-insight-box');
+            if(topValue > 0) {
+                summaryBox.innerText = `📊 Most spending item detected: ${topCatName} at ${formatCurrency(topValue)}. Consider evaluating parameters if this breaches expectation!`;
+            } else {
+                summaryBox.innerText = `✨ No active structural trends found yet within the specified 15 to 15 timeframe framework parameters.`;
+            }
+
+            setTimeout(renderAnalyticsCharts, 100);
+        }
+
+        function renderAnalyticsCharts() {
+            const ctxPie = document.getElementById('chartPie');
+            if(ctxPie) {
+                let labels = []; let dataValues = []; let backgroundColors = [];
+                
+                appState.categories.forEach(cat => {
+                    let catSum = appState.transactions
+                        .filter(t => t.type === 'expense' && t.categoryId === cat.id)
+                        .reduce((sum, t) => sum + Number(t.amount), 0);
+                    
+                    if(catSum > 0) {
+                        labels.push(cat.name);
+                        dataValues.push(catSum);
+                        backgroundColors.push(cat.color || "#C9A7FF");
+                    }
+                });
+
+                if(dataValues.length === 0) {
+                    labels = ["No data logged"]; dataValues = [1]; backgroundColors = ["#E4E1ED"];
+                }
+
+                if(pieChartInstance) pieChartInstance.destroy();
+                pieChartInstance = new Chart(ctxPie.getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 2, borderColor: '#ffffff' }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
+                });
+            }
+
+            const ctxLine = document.getElementById('chartLine');
+            if(ctxLine) {
+                let timelineLabels = []; let dailyDataPoints = [];
+                let trackingDate = new Date(2026, 4, 15); const endDate = new Date(2026, 5, 15);
+                while(trackingDate <= endDate) {
+                    timelineLabels.push(trackingDate.getDate() + " " + trackingDate.toLocaleString('en-US', { month: 'short' }));
+                    let daySum = appState.transactions
+                        .filter(t => t.type === 'expense' && new Date(t.date).toDateString() === trackingDate.toDateString())
+                        .reduce((sum, t) => sum + Number(t.amount), 0);
+                    dailyDataPoints.push(daySum);
+                    trackingDate.setDate(trackingDate.getDate() + 1);
+                }
+                if(lineChartInstance) lineChartInstance.destroy();
+                lineChartInstance = new Chart(ctxLine.getContext('2d'), {
+                    type: 'line',
+                    data: { labels: timelineLabels, datasets: [{ label: 'Expense', data: dailyDataPoints, borderColor: '#B8A8FF', backgroundColor: 'rgba(184, 168, 255, 0.15)', borderWidth: 3, tension: 0.3, fill: true, pointRadius: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
+        }
+
+        function renderSavingsView() {
+            const container = document.getElementById('savings-master-list');
+            container.innerHTML = '';
+            if (appState.savings.length === 0) {
+                container.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:4px 0;">Belum ada target finansial dibuat.</p>`;
+                return;
+            }
+            appState.savings.forEach(sv => {
+                let pct = Math.min((sv.current / sv.target) * 100, 100);
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="budget-item-card item-enter-active" id="savings-card-${sv.id}" style="background: rgba(255,255,255,0.7); margin-bottom:12px;">
+                        <div class="budget-card-header" style="margin-bottom:8px;">
+                            <div class="budget-card-left">
+                                <div class="item-icon" style="background:#BDE7FF50; color:var(--text-main);"><i class="fa-solid ${sv.icon || 'fa-vault'}"></i></div>
+                                <div class="item-info">
+                                    <h5 style="font-size:14px; font-weight:800;">${sv.name}</h5>
+                                    <p>${formatCurrency(sv.current)} / ${formatCurrency(sv.target)}</p>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:12px; font-weight:800; color:var(--pastel-purple);">${pct.toFixed(0)}%</span>
+                                <button class="budget-action-icon-btn delete-trigger" onclick="deleteSavingsGoal('${sv.id}')" style="width:26px; height:26px;"><i class="fa-solid fa-trash-can" style="font-size:10px;"></i></button>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg" style="height:6px; margin-bottom:10px;">
+                            <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, #86E3CE, #BDE7FF);"></div>
+                        </div>
+                        <div class="savings-grid">
+                            <button class="savings-action-btn dep" onclick="openSavingsActionModal('${sv.id}', 'deposit')"><i class="fa-solid fa-vault"></i> Deposit</button>
+                            <button class="savings-action-btn wth" onclick="openSavingsActionModal('${sv.id}', 'withdraw')"><i class="fa-solid fa-hand-holding-dollar"></i> Withdraw</button>
+                        </div>
+                    </div>`);
+            });
+        }
+
+        function openSavingsFormModal() {
+            document.getElementById('form-sv-name').value = '';
+            document.getElementById('form-sv-target').value = '';
+            document.getElementById('modal-savings-create').classList.add('active');
+        }
+
+        function handleCreateSavingsGoal() {
+            const name = document.getElementById('form-sv-name').value.trim();
+            const target = Number(document.getElementById('form-sv-target').value);
+            if (!name || target <= 0) return;
+            appState.savings.push({ id: "sv_" + Date.now(), name, target, current: 0, icon: "fa-piggy-bank" });
+            saveToStorage(); closeAllModals(); renderSavingsView();
+        }
+
+        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK TARGET SAVINGS
+        function deleteSavingsGoal(id) {
+            const targetEl = document.getElementById(`savings-card-${id}`);
+            if (targetEl) {
+                targetEl.classList.remove('item-enter-active');
+                targetEl.classList.add('item-leave-active');
+                
+                setTimeout(() => {
+                    const sv = appState.savings.find(x => x.id === id);
+                    if (!sv) return;
+                    if (sv.current > 0) appState.mainBalance += sv.current;
+                    appState.savings = appState.savings.filter(x => x.id !== id);
+                    saveToStorage(); 
+                    renderSavingsView(); 
+                    renderDashboardView();
+                }, 400);
+            }
+        }
+
+        function openSavingsActionModal(id, mode) {
+            const sv = appState.savings.find(x => x.id === id);
+            document.getElementById('form-savings-id').value = id;
+            document.getElementById('form-savings-mode').value = mode;
+            document.getElementById('savings-modal-title').innerText = mode === 'deposit' ? `Deposit to ${sv.name}` : `Withdraw from ${sv.name}`;
+            document.getElementById('savings-action-amount').value = '';
+            document.getElementById('modal-savings-action').classList.add('active');
+        }
+
+        function handleExecuteSavingsTransaction() {
+            const id = document.getElementById('form-savings-id').value;
+            const mode = document.getElementById('form-savings-mode').value;
+            const amt = Number(document.getElementById('savings-action-amount').value);
+            if(amt <= 0) return;
+            const idx = appState.savings.findIndex(x => x.id === id);
+            if(idx === -1) return;
+
+            if(mode === 'deposit') {
+                if(appState.mainBalance < amt) { alert("⚠️ Saldo Main Balance tidak mencukupi."); return; }
+                appState.mainBalance -= amt; appState.savings[idx].current += amt;
+            } else {
+                if(appState.savings[idx].current < amt) { alert("⚠️ Pengambilan melebihi tabungan."); return; }
+                appState.savings[idx].current -= amt; appState.mainBalance += amt;
+            }
+            saveToStorage(); closeAllModals(); renderSavingsView();
+        }
+
+        function openQuickTypeModal() {
+            document.getElementById('quick-input-text').value = '';
+            const qWalletSelect = document.getElementById('quick-wallet-select');
+            qWalletSelect.innerHTML = '<option value="main">Main Wallet Balance</option>';
+            appState.budgets.forEach(w => {
+                qWalletSelect.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name} (${formatCurrency(w.allocated)})</option>`);
+            });
+            document.getElementById('modal-quick-type').classList.add('active');
+        }
+
+        function executeQuickNlpDetection() {
+            const rawText = document.getElementById('quick-input-text').value.trim();
+            if(!rawText) return;
+            const numberMatch = rawText.match(/\d+/);
+            if(!numberMatch) { alert("⚠️ Angka nominal tidak terdeteksi."); return; }
+            const detectedAmount = parseInt(numberMatch[0]);
+
+            let chosenWalletId = document.getElementById('quick-wallet-select').value;
+            const cleanText = rawText.toLowerCase();
+
+            if (cleanText.includes("paypay") || cleanText.includes("pay pay")) {
+                let targetW = appState.budgets.find(w => w.name.toLowerCase().includes("paypay"));
+                if (targetW) chosenWalletId = targetW.id;
+            } else if (cleanText.includes("cash") || cleanText.includes("tunai")) {
+                let targetW = appState.budgets.find(w => w.name.toLowerCase().includes("cash"));
+                if (targetW) chosenWalletId = targetW.id;
+            } else if (cleanText.includes("mandiri") || cleanText.includes("bank")) {
+                let targetW = appState.budgets.find(w => w.name.toLowerCase().includes("mandiri"));
+                if (targetW) chosenWalletId = targetW.id;
+            }
+
+            if (chosenWalletId === 'main') {
+                if(appState.mainBalance < detectedAmount) { alert("⚠️ Saldo Main Wallet Pool tidak cukup."); return; }
+                appState.mainBalance -= detectedAmount;
+            } else {
+                let wIdx = appState.budgets.findIndex(w => w.id === chosenWalletId);
+                if (wIdx !== -1) {
+                    if (appState.budgets[wIdx].allocated < detectedAmount) { alert(`⚠️ Saldo di dompet ${appState.budgets[wIdx].name} tidak cukup.`); return; }
+                    appState.budgets[wIdx].allocated -= detectedAmount;
+                }
+            }
+
+            let matchedCat = null;
+            appState.categories.forEach(cat => {
+                if(cleanText.includes(cat.name.toLowerCase())) matchedCat = cat;
+            });
+
+            if (!matchedCat) {
+                let potentialCatName = rawText.replace(/\d+/g, '').trim().split(' ')[0];
+                if (!potentialCatName || potentialCatName.length < 2) potentialCatName = "Kustom";
+                potentialCatName = potentialCatName.charAt(0).toUpperCase() + potentialCatName.slice(1);
+
+                let duplicateCheck = appState.categories.find(c => c.name.toLowerCase() === potentialCatName.toLowerCase());
+                if (duplicateCheck) {
+                    matchedCat = duplicateCheck;
+                } else {
+                    const newCatId = "c_" + Date.now();
+                    let randomPastel = presetColors[Math.floor(Math.random() * presetColors.length)];
+                    matchedCat = { id: newCatId, name: potentialCatName, color: randomPastel };
+                    appState.categories.push(matchedCat);
+                }
+            }
+
+            let cleanNote = rawText.replace(/\d+/g, '').trim();
+            if(!cleanNote) cleanNote = `Quick Log ${matchedCat.name}`;
+
+            appState.transactions.push({
+                id: "tx_nlp_" + Date.now(),
+                type: 'expense',
+                amount: detectedAmount,
+                walletId: chosenWalletId, 
+                categoryId: matchedCat.id,
+                note: "📝 " + cleanNote,
+                date: new Date().toISOString()
+            });
+
+            saveToStorage(); 
+            closeAllModals(); 
+            renderDashboardView();
+        }
+
+        function backupDatabaseToJson() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `clarity_v5_database_${Date.now()}.json`);
+            document.body.appendChild(dl); dl.click(); dl.remove();
+        }
+
+        function triggerRestoreInputClick() { document.getElementById('restore-file-input').click(); }
+
+        function restoreDatabaseFromJson(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const r = new FileReader();
+            r.onload = function(evt) {
+                try {
+                    const imported = JSON.parse(evt.target.result);
+                    if (imported.budgets && imported.transactions) {
+                        appState = imported; saveToStorage(); window.location.reload();
+                    } else { alert("⚠️ Backup JSON tidak valid."); }
+                } catch (err) { alert("⚠️ Gagal memproses berkas."); }
+            };
+            r.readAsText(file);
+        }
+
+        function triggerResetSystemEngine() {
+            if(confirm("Hapus seluruh data? Parameter akan kembali ke setelan bawaan pabrik.")) {
+                localStorage.removeItem('clarity_envelope_engine_v5'); window.location.reload();
+            }
+        }
+
+        function buildFormPalettes() {
+            const cg = document.getElementById('form-color-grid');
+            presetColors.forEach((c, i) => {
+                cg.insertAdjacentHTML('beforeend', `<div class="color-dot-option ${i===0?'active':''}" id="c-dot-${i}" style="background:${c}" onclick="document.querySelectorAll('.color-dot-option').forEach(x=>x.classList.remove('active')); document.getElementById('c-dot-${i}').classList.add('active'); selectedFormColor='${c}';"></div>`);
+            });
+            const ig = document.getElementById('form-icon-grid');
+            presetIcons.forEach((ico, i) => {
+                ig.insertAdjacentHTML('beforeend', `<div class="icon-box-option ${i===0?'active':''}" id="i-box-${i}" onclick="document.querySelectorAll('.icon-box-option').forEach(x=>x.classList.remove('active')); document.getElementById('i-box-${i}').classList.add('active'); selectedFormIcon='${ico}';"><i class="fa-solid ${ico}"></i></div>`);
+            });
+        }
+
+        function saveProfileSettings() {
+            appState.user = document.getElementById('settings-username').value.trim() || "Indra";
+            saveToStorage(); renderHeaderUI(); alert("Profile Updated!");
+        }
+
+        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+        function closeActiveModal(e) { if(e.target.classList.contains('modal-overlay')) closeAllModals(); }
+    </script>
+</body>
+</html>
