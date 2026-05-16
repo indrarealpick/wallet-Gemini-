@@ -34,7 +34,7 @@
             --shadow-soft: 0 20px 40px rgba(160, 140, 210, 0.12);
             --shadow-card: 0 15px 30px rgba(184, 168, 255, 0.15);
             
-            /* RAHASIA TIMING TRANSISI ALA iOS (Fluid Spring Mimic) */
+            /* TIMING TRANSISI iOS FLUID SPRING */
             --ios-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
             --ios-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
             --transition-smooth: all 0.5s var(--ios-ease-out);
@@ -74,7 +74,6 @@
             position: relative;
         }
 
-        /* ANIMASI PERGANTIAN MENU ALA iOS (Slide + Fade) */
         .app-view {
             opacity: 0;
             transform: translateY(16px) scale(0.98);
@@ -223,7 +222,6 @@
             background: var(--card-bg-pure);
         }
 
-        /* FLOATING ACTION BUTTONS GROUP */
         .fab-group {
             position: fixed;
             bottom: 105px;
@@ -254,7 +252,7 @@
         .fab-income { background: linear-gradient(135deg, #86E3CE 0%, #68B984 100%); }
         .fab-expense { background: linear-gradient(135deg, #FF9F9F 0%, #FD8A8A 100%); }
 
-        /* BUDGET & SAVINGS CARDS WITH ENTER/EXIT ANIMATIONS */
+        /* OPTIMIZED HARDWARE-ACCELERATED FLUID LISTS */
         .budget-item-card {
             background: var(--card-bg-pure);
             border-radius: var(--radius-medium);
@@ -262,33 +260,27 @@
             margin-bottom: 14px;
             box-shadow: 0 10px 25px rgba(160, 140, 210, 0.06);
             border: 1px solid rgba(255,255,255,0.8);
-            transition: opacity 0.4s var(--ios-ease-out), transform 0.4s var(--ios-ease-out), max-height 0.4s var(--ios-ease-out), padding 0.4s var(--ios-ease-out), margin 0.4s var(--ios-ease-out);
             max-height: 150px;
-            opacity: 1;
-            transform: scale(1);
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+            transition: opacity 0.5s var(--ios-ease-out), transform 0.5s var(--ios-ease-out), max-height 0.5s var(--ios-ease-out), padding 0.5s var(--ios-ease-out), margin 0.5s var(--ios-ease-out);
             overflow: hidden;
             will-change: transform, opacity, max-height;
         }
 
-        /* Animasi masuk untuk item baru */
         .item-enter-active {
-            animation: iosListEnter 0.4s var(--ios-ease-out) forwards;
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
         }
 
-        /* Animasi keluar saat item dihapus */
         .item-leave-active {
             opacity: 0 !important;
-            transform: scale(0.85) translateY(-10px) !important;
+            transform: scale(0.85) translateY(-12px) !important;
             max-height: 0 !important;
             padding-top: 0 !important;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
             border: none !important;
-        }
-
-        @keyframes iosListEnter {
-            from { opacity: 0; transform: scale(0.9) translateY(15px); max-height: 0; padding-top: 0; padding-bottom: 0; }
-            to { opacity: 1; transform: scale(1) translateY(0); max-height: 150px; }
         }
 
         .budget-card-header {
@@ -345,11 +337,6 @@
             transition: width 0.8s var(--ios-ease-out);
         }
 
-        .progress-bar-fill.danger {
-            background: linear-gradient(90deg, #FF9F9F, #FD8A8A) !important;
-        }
-
-        /* MASTER LISTS */
         .section-title-container {
             display: flex;
             justify-content: space-between;
@@ -369,8 +356,10 @@
             border-radius: var(--radius-medium);
             border: 1px solid rgba(255,255,255,0.5);
             margin-bottom: 10px;
-            transition: transform 0.4s var(--ios-ease-out), opacity 0.4s var(--ios-ease-out), max-height 0.4s var(--ios-ease-out), padding 0.4s var(--ios-ease-out), margin 0.4s var(--ios-ease-out);
             max-height: 80px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: transform 0.5s var(--ios-ease-out), opacity 0.5s var(--ios-ease-out), max-height 0.5s var(--ios-ease-out), padding 0.5s var(--ios-ease-out), margin 0.5s var(--ios-ease-out);
             will-change: transform, opacity;
         }
 
@@ -399,7 +388,6 @@
         }
         .item-amount { font-size: 14px; font-weight: 800; white-space: nowrap; }
 
-        /* FORMS STRUCTURE */
         .form-group { margin-bottom: 18px; }
         .form-group label {
             display: block;
@@ -497,7 +485,6 @@
         }
         .btn-pastel-secondary:active { transform: scale(0.97); }
 
-        /* SAVINGS COMPONENT ELEMENTS */
         .savings-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -521,7 +508,6 @@
         .savings-action-btn.dep { background: rgba(134, 227, 206, 0.2); color: #449c87; }
         .savings-action-btn.wth { background: rgba(255, 159, 159, 0.2); color: #d66565; }
 
-        /* MODAL ANIMATION MECHANISMS (iOS Native Modal Sheet Style) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -581,7 +567,6 @@
         }
         .close-modal-btn:active { transform: scale(0.85); }
 
-        /* NAVIGATION BAR WITH HIGHLIGHT SPRING EFFECT */
         .bottom-nav {
             position: fixed;
             bottom: 20px;
@@ -633,7 +618,6 @@
             box-shadow: 0 8px 15px rgba(184, 168, 255, 0.4);
         }
 
-        /* DIALOG POPUP ALA iOS ALERT */
         .confirm-dialog-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -681,6 +665,27 @@
             font-weight: 600;
             margin-top: 10px;
         }
+
+        /* CUSTOM CENTER INFOGRAPHIC FOR DOUGHNUT CHART */
+        .chart-container-with-center {
+            position: relative; 
+            height: 240px; 
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chart-center-metrics {
+            position: absolute;
+            text-align: center;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .chart-center-metrics .c-label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px;}
+        .chart-center-metrics .c-val { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px;}
 
         .hidden { display: none !important; }
     </style>
@@ -741,8 +746,12 @@
             
             <div class="floating-card">
                 <h3 class="section-title" style="margin-bottom: 16px;">Expense Distribution (By Category)</h3>
-                <div style="position: relative; height: 220px; width: 100%;">
+                <div class="chart-container-with-center">
                     <canvas id="chartPie"></canvas>
+                    <div class="chart-center-metrics">
+                        <span class="c-label">Top Cost</span>
+                        <span class="c-val" id="chart-center-top-val">-</span>
+                    </div>
                 </div>
             </div>
             <div class="floating-card">
@@ -1068,28 +1077,24 @@
             });
         }
 
-        /* ENGINE NAVIGASI BARU DENGAN COGNITIVE DELAY ALA INTERAKSI FISIK iOS */
         function switchView(viewTarget) {
             const allViews = document.querySelectorAll('.app-view');
             const targetView = document.getElementById(`view-${viewTarget}`);
             const currentActiveView = document.querySelector('.app-view.view-active');
             
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.getElementById(`nav-${viewTarget}`).classList.add('active');
+            const activeNav = document.getElementById(`nav-${viewTarget}`);
+            if(activeNav) activeNav.classList.add('active');
 
             if (currentActiveView && currentActiveView !== targetView) {
-                // Fade out view saat ini terlebih dahulu
                 currentActiveView.classList.remove('view-active');
                 setTimeout(() => {
                     currentActiveView.classList.remove('view-visible');
-                    
-                    // Nyalakan view target baru
                     targetView.classList.add('view-visible');
-                    // Menggunakan requestAnimationFrame agar browser sempat mendaftarkan perubahan display
                     requestAnimationFrame(() => {
                         targetView.classList.add('view-active');
                     });
-                }, 150); // Kecepatan dismiss iOS yang responsif
+                }, 150);
             } else {
                 allViews.forEach(v => {
                     v.classList.remove('view-active');
@@ -1101,7 +1106,6 @@
                 });
             }
             
-            // Render muatan data internal masing-masing view
             setTimeout(() => {
                 if(viewTarget === 'home') renderDashboardView();
                 if(viewTarget === 'analytics') renderAnalyticsView();
@@ -1147,7 +1151,7 @@
                 return;
             }
 
-            sortedTx.forEach(tx => {
+            sortedTx.forEach((tx, i) => {
                 let sourceWalletName = "Main Wallet Pool";
                 let matchedWallet = appState.budgets.find(w => w.id === tx.walletId);
                 if (matchedWallet) sourceWalletName = matchedWallet.name;
@@ -1167,8 +1171,8 @@
                     catIcon = "fa-money-bill-wave";
                 }
 
-                targetListGrid.insertAdjacentHTML('beforeend', `
-                    <div class="list-item item-enter-active">
+                const itemHtml = `
+                    <div class="list-item" id="dash-tx-item-${tx.id}">
                         <div class="item-left">
                             <div class="item-icon" style="background:${catColor}40; color:var(--text-main);"><i class="fa-solid ${catIcon}"></i></div>
                             <div class="item-info"><h5>${tx.note}</h5><p>${displaySub} • ${new Date(tx.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}</p></div>
@@ -1176,7 +1180,16 @@
                         <div class="item-amount" style="color:${tx.type === 'income' ? '#68B984' : 'var(--text-main)'}">
                             ${tx.type === 'income' ? '+' : '-'}${formatCurrency(tx.amount)}
                         </div>
-                    </div>`);
+                    </div>`;
+                targetListGrid.insertAdjacentHTML('beforeend', itemHtml);
+                
+                // Hardware accelerated non-blocking stack render
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const el = document.getElementById(`dash-tx-item-${tx.id}`);
+                        if(el) el.classList.add('item-enter-active');
+                    }, i * 40);
+                });
             });
         }
 
@@ -1189,9 +1202,9 @@
                 return;
             }
 
-            appState.budgets.forEach(wallet => {
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="budget-item-card item-enter-active" id="wallet-card-${wallet.id}">
+            appState.budgets.forEach((wallet, i) => {
+                const itemHtml = `
+                    <div class="budget-item-card" id="wallet-card-${wallet.id}">
                         <div class="budget-card-header" style="margin-bottom:0;">
                             <div class="budget-card-left">
                                 <div class="item-icon" style="background:${wallet.color}40; color:var(--text-main);"><i class="fa-solid ${wallet.icon}"></i></div>
@@ -1205,7 +1218,15 @@
                                 <button class="budget-action-icon-btn delete-trigger" onclick="triggerDeleteConfirmation('${wallet.id}')"><i class="fa-solid fa-trash-can" style="font-size:11px;"></i></button>
                             </div>
                         </div>
-                    </div>`);
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+                
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const el = document.getElementById(`wallet-card-${wallet.id}`);
+                        if(el) el.classList.add('item-enter-active');
+                    }, i * 50);
+                });
             });
         }
 
@@ -1216,11 +1237,13 @@
                 document.getElementById('form-budget-id').value = b.id;
                 document.getElementById('form-budget-name').value = b.name;
                 document.getElementById('form-budget-limit').value = b.allocated;
+                document.getElementById('form-budget-limit').disabled = true; // Kunci input nominal saat edit biar kalkulasi tidak kacau
             } else {
                 document.getElementById('budget-modal-title').innerText = "Create Wallet Pool";
                 document.getElementById('form-budget-id').value = '';
                 document.getElementById('form-budget-name').value = '';
                 document.getElementById('form-budget-limit').value = '';
+                document.getElementById('form-budget-limit').disabled = false;
             }
             document.getElementById('modal-budget-form').classList.add('active');
         }
@@ -1233,13 +1256,25 @@
             if(!name || valueAmt < 0) return;
 
             if(id) {
+                // Mode Edit: Update Nama Saja
                 const idx = appState.budgets.findIndex(b => b.id === id);
                 if(idx !== -1) {
                     appState.budgets[idx].name = name;
-                    appState.budgets[idx].allocated = valueAmt;
                 }
             } else {
-                appState.budgets.push({ id: "w_" + Date.now(), name, allocated: valueAmt, icon: selectedFormIcon, color: selectedFormColor });
+                // Mode Baru: POTONG MAIN BALANCE OTOMATIS
+                if (appState.mainBalance < valueAmt) {
+                    alert("⚠️ Saldo Main Balance tidak mencukupi untuk dialokasikan ke dompet baru ini!");
+                    return;
+                }
+                appState.mainBalance -= valueAmt;
+                appState.budgets.push({ 
+                    id: "w_" + Date.now(), 
+                    name, 
+                    allocated: valueAmt, 
+                    icon: selectedFormIcon, 
+                    color: selectedFormColor 
+                });
             }
 
             saveToStorage(); 
@@ -1252,7 +1287,6 @@
             document.getElementById('confirm-delete-dialog').classList.add('active');
         }
 
-        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK WALLET
         document.getElementById('confirm-delete-execute-btn').onclick = () => {
             const targetEl = document.getElementById(`wallet-card-${pendingDeleteBudgetId}`);
             document.getElementById('confirm-delete-dialog').classList.remove('active'); 
@@ -1263,11 +1297,11 @@
                 
                 setTimeout(() => {
                     const w = appState.budgets.find(x => x.id === pendingDeleteBudgetId);
-                    if(w) appState.mainBalance += Number(w.allocated);
+                    if(w) appState.mainBalance += Number(w.allocated); // Kembalikan saldo ke Main Balance
                     appState.budgets = appState.budgets.filter(b => b.id !== pendingDeleteBudgetId);
                     saveToStorage(); 
                     renderBudgetView();
-                }, 400); // Sinkron dengan durasi CSS leave transition
+                }, 400); 
             }
         };
 
@@ -1447,7 +1481,7 @@
                 return;
             }
 
-            filtered.reverse().forEach(tx => {
+            filtered.reverse().forEach((tx, i) => {
                 let walletLabel = tx.walletId === 'main' ? "Main Wallet" : "Custom Wallet";
                 let matchedW = appState.budgets.find(w => w.id === tx.walletId);
                 if(matchedW) walletLabel = matchedW.name;
@@ -1467,8 +1501,8 @@
                     catIcon = "fa-money-bill-wave";
                 }
 
-                list.insertAdjacentHTML('beforeend', `
-                    <div class="list-item item-enter-active" id="tx-item-${tx.id}">
+                const itemHtml = `
+                    <div class="list-item" id="tx-item-${tx.id}">
                         <div class="item-left">
                             <div class="item-icon" style="background:${catColor}40; color:var(--text-main);"><i class="fa-solid ${catIcon}"></i></div>
                             <div class="item-info">
@@ -1484,7 +1518,15 @@
                                 <i class="fa-solid fa-trash-can" style="font-size:10px;"></i>
                             </button>
                         </div>
-                    </div>`);
+                    </div>`;
+                list.insertAdjacentHTML('beforeend', itemHtml);
+
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const el = document.getElementById(`tx-item-${tx.id}`);
+                        if(el) el.classList.add('item-enter-active');
+                    }, i * 35);
+                });
             });
         }
 
@@ -1498,7 +1540,6 @@
             pendingDeleteTxId = null;
         }
 
-        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK LOG RIWAYAT
         document.getElementById('confirm-delete-tx-execute-btn').onclick = () => {
             if (!pendingDeleteTxId) return;
             const targetEl = document.getElementById(`tx-item-${pendingDeleteTxId}`);
@@ -1530,7 +1571,7 @@
                     }
                     pendingDeleteTxId = null;
                     renderHistoryView();
-                }, 400); // Sinkron dengan durasi CSS leave transition
+                }, 400); 
             }
         };
 
@@ -1557,6 +1598,7 @@
             });
 
             document.getElementById('an-top-spending').innerText = topValue > 0 ? `${topCatName}` : "-";
+            document.getElementById('chart-center-top-val').innerText = topValue > 0 ? formatCurrency(topValue) : "-";
             
             const summaryBox = document.getElementById('analytics-smart-insight-box');
             if(topValue > 0) {
@@ -1568,6 +1610,7 @@
             setTimeout(renderAnalyticsCharts, 100);
         }
 
+        /* UPGRADED DIAGRAM BULAT DAN LINE UI SUPREME PREMIUM LOOK */
         function renderAnalyticsCharts() {
             const ctxPie = document.getElementById('chartPie');
             if(ctxPie) {
@@ -1592,8 +1635,49 @@
                 if(pieChartInstance) pieChartInstance.destroy();
                 pieChartInstance = new Chart(ctxPie.getContext('2d'), {
                     type: 'doughnut',
-                    data: { labels: labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 2, borderColor: '#ffffff' }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
+                    data: { 
+                        labels: labels, 
+                        datasets: [{ 
+                            data: dataValues, 
+                            backgroundColor: backgroundColors, 
+                            borderWidth: 3, 
+                            borderColor: '#ffffff',
+                            hoverOffset: 6,
+                            borderRadius: 4
+                        }] 
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        cutout: '76%', // UI Lebih tipis, elegan, dan clean layaknya Apple Wallet / Revolut
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: 8,
+                                    font: { size: 11, weight: '600', family: 'Plus Jakarta Sans' },
+                                    color: '#4A3E65',
+                                    padding: 16
+                                } 
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(74, 62, 101, 0.9)',
+                                titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: '700' },
+                                bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+                                padding: 12,
+                                borderRadius: 12,
+                                displayColors: true
+                            }
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true,
+                            duration: 1200,
+                            easing: 'easeOutQuart'
+                        }
+                    }
                 });
             }
 
@@ -1625,10 +1709,10 @@
                 container.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:4px 0;">Belum ada target finansial dibuat.</p>`;
                 return;
             }
-            appState.savings.forEach(sv => {
+            appState.savings.forEach((sv, i) => {
                 let pct = Math.min((sv.current / sv.target) * 100, 100);
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="budget-item-card item-enter-active" id="savings-card-${sv.id}" style="background: rgba(255,255,255,0.7); margin-bottom:12px;">
+                const itemHtml = `
+                    <div class="budget-item-card" id="savings-card-${sv.id}" style="background: rgba(255,255,255,0.7); margin-bottom:12px;">
                         <div class="budget-card-header" style="margin-bottom:8px;">
                             <div class="budget-card-left">
                                 <div class="item-icon" style="background:#BDE7FF50; color:var(--text-main);"><i class="fa-solid ${sv.icon || 'fa-vault'}"></i></div>
@@ -1649,7 +1733,15 @@
                             <button class="savings-action-btn dep" onclick="openSavingsActionModal('${sv.id}', 'deposit')"><i class="fa-solid fa-vault"></i> Deposit</button>
                             <button class="savings-action-btn wth" onclick="openSavingsActionModal('${sv.id}', 'withdraw')"><i class="fa-solid fa-hand-holding-dollar"></i> Withdraw</button>
                         </div>
-                    </div>`);
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+                
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const el = document.getElementById(`savings-card-${sv.id}`);
+                        if(el) el.classList.add('item-enter-active');
+                    }, i * 50);
+                });
             });
         }
 
@@ -1667,7 +1759,6 @@
             saveToStorage(); closeAllModals(); renderSavingsView();
         }
 
-        // AMBIL ALIH DAN JALANKAN EFEK HAPUS FLUID LIST UNTUK TARGET SAVINGS
         function deleteSavingsGoal(id) {
             const targetEl = document.getElementById(`savings-card-${id}`);
             if (targetEl) {
