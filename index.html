@@ -565,7 +565,7 @@
             transform: translateY(15px) scale(0.95);
             transition: opacity 0.5s var(--pixel-ease), transform 0.5s var(--pixel-ease), max-height 0.5s var(--pixel-ease), padding 0.5s var(--pixel-ease), margin 0.5s var(--pixel-ease);
             overflow: hidden;
-            will-change: transform, opacity, max-height;
+            will-change: transform, opacity;
         }
 
         .item-enter-active { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
@@ -908,6 +908,12 @@
         </main>
 
         <main id="view-analytics" class="app-view">
+            <div style="margin-bottom: 14px;">
+                <select id="analytics-period-select" class="select-pastel" onchange="renderAnalyticsView()">
+                    <!-- Opsi periode diisi dinamis oleh JS -->
+                </select>
+            </div>
+
             <div class="floating-card" style="background: linear-gradient(135deg, #FFF 0%, #FBFBFF 100%);">
                 <h4 style="font-size:14px; margin-bottom:12px; font-weight:800;">Core Analytics Engine</h4>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">
@@ -960,7 +966,16 @@
                     <option value="">All Categories</option>
                 </select>
             </div>
+            <div style="margin-bottom: 14px;">
+                <select id="history-period-select" class="select-pastel" onchange="renderHistoryView()">
+                    <!-- Diisi dinamis berdasarkan riwayat arsip periode -->
+                </select>
+            </div>
             <div class="floating-card" style="padding: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 12px; padding: 0 4px;" id="history-period-summary">
+                    <span style="color:#73D39C;">Income: ¥0</span>
+                    <span style="color:#FFA1B8;">Expense: ¥0</span>
+                </div>
                 <div id="history-master-list"></div>
             </div>
         </main>
@@ -1169,7 +1184,8 @@
             budgets: [],       
             standaloneBudgets: [], 
             categories: [],    
-            transactions: []   
+            transactions: [],
+            currentPeriodKey: "" // Menyimpan penanda string periode aktif saat ini
         };
 
         const iconVectorMap = {
@@ -1185,7 +1201,6 @@
             "fa-sparkles": "clay-3d-sparkles"
         };
 
-        /* PRESET PALETTES TUNED TO GRADIENTS: BLUE, CYAN, PINK & LAVENDER PASTELS */
         const presetColors = [
             "#A9ECFF", /* Cyan Glow */
             "#FFC0D9", /* Baby Pink */
@@ -1215,8 +1230,72 @@
             initializeStorageEngine();
             renderHeaderUI();
             buildFormPalettes();
+            populatePeriodDropdowns();
             switchView('home');
         });
+
+        // ======================== LOGIC SYSTEM PERIOD RE-ENGINEERED (15 -> 15 NEXT MONTH) ========================
+        function getTransactionPeriodKey(dateString) {
+            const date = new Date(dateString);
+            let year = date.getFullYear();
+            let month = date.getMonth(); // 0-11
+            const day = date.getDate();
+
+            // Jika tanggal sebelum 15, berarti masuk ke kluster rentang periode yang dimulai bulan lalu
+            if (day < 15) {
+                month = month - 1;
+                if (month < 0) {
+                    month = 11;
+                    year = year - 1;
+                }
+            }
+            
+            const paddedMonth = String(month + 1).padStart(2, '0');
+            return `${year}-${paddedMonth}`;
+        }
+
+        function getCurrentSystemPeriodKey() {
+            return getTransactionPeriodKey(new Date().toISOString());
+        }
+
+        function parsePeriodKeyToLabel(periodKey) {
+            if (!periodKey || !periodKey.includes('-')) return periodKey;
+            const parts = periodKey.split('-');
+            const startYear = parseInt(parts[0], 10);
+            const startMonthIdx = parseInt(parts[1], 10) - 1; // 0-11
+            
+            const monthsEng = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            let endMonthIdx = startMonthIdx + 1;
+            let endYear = startYear;
+            if (endMonthIdx > 11) {
+                endMonthIdx = 0;
+                endYear = startYear + 1;
+            }
+
+            return `15 ${monthsEng[startMonthIdx]} ${startYear} - 15 ${monthsEng[endMonthIdx]} ${endYear}`;
+        }
+
+        function populatePeriodDropdowns() {
+            const periods = new Set();
+            periods.add(getCurrentSystemPeriodKey());
+
+            appState.transactions.forEach(t => {
+                periods.add(getTransactionPeriodKey(t.date));
+            });
+
+            const sortedPeriods = Array.from(periods).sort((a, b) => b.localeCompare(a));
+
+            const analyticsSelect = document.getElementById('analytics-period-select');
+            const historySelect = document.getElementById('history-period-select');
+
+            if(analyticsSelect) {
+                analyticsSelect.innerHTML = sortedPeriods.map(p => `<option value="${p}">${parsePeriodKeyToLabel(p)}</option>`).join('');
+            }
+            if(historySelect) {
+                historySelect.innerHTML = sortedPeriods.map(p => `<option value="${p}">${parsePeriodKeyToLabel(p)}</option>`).join('');
+            }
+        }
 
         function initializeStorageEngine() {
             const localData = localStorage.getItem('clarity_envelope_engine_v6');
@@ -1224,6 +1303,7 @@
                 try { 
                     appState = JSON.parse(localData); 
                     if (!appState.standaloneBudgets) appState.standaloneBudgets = [];
+                    if (!appState.transactions) appState.transactions = [];
                     
                     appState.budgets.forEach(w => {
                         if(!w.iconClass || w.iconClass.startsWith('fa-') === false) {
@@ -1235,7 +1315,14 @@
                     });
                     if (!appState.categories || appState.categories.length === 0) populateDefaultCategories();
                     
-                    /* AUTOMATED EVALUATION PROCESS FOR BUDGET RESETS ON LOAD */
+                    // Reset deteksi internal transisi bulan tanpa merusak struktur saldo keuangan utama
+                    const activePeriodNow = getCurrentSystemPeriodKey();
+                    if (!appState.currentPeriodKey) {
+                        appState.currentPeriodKey = activePeriodNow;
+                    } else if (appState.currentPeriodKey !== activePeriodNow) {
+                        appState.currentPeriodKey = activePeriodNow;
+                    }
+
                     evaluatePeriodBudgetResets();
                 } catch(e) { 
                     loadInitialDummyDataset(); 
@@ -1259,28 +1346,30 @@
             localStorage.setItem('clarity_envelope_engine_v6', JSON.stringify(appState));
         }
 
-        /* RE-CONFIGURED TO FRESH NEW CLEAN ENGINE INITIALIZATION STATE */
         function loadInitialDummyDataset() {
             appState.mainBalance = 0; 
             appState.budgets = [];
             appState.standaloneBudgets = [];
             populateDefaultCategories();
             appState.transactions = [];
+            appState.currentPeriodKey = getCurrentSystemPeriodKey();
             saveToStorage();
         }
 
         function renderHeaderUI() {
             document.getElementById('header-greeting').innerText = `Good Evening, ${appState.user}`;
+            document.getElementById('header-period').innerText = `${parsePeriodKeyToLabel(getCurrentSystemPeriodKey())}`;
             document.getElementById('settings-username').value = appState.user;
             
             const filterSelect = document.getElementById('history-filter-category');
-            filterSelect.innerHTML = '<option value="">All Categories</option>';
-            appState.categories.forEach(cat => {
-                filterSelect.insertAdjacentHTML('beforeend', `<option value="${cat.id}">${cat.name}</option>`);
-            });
+            if (filterSelect) {
+                filterSelect.innerHTML = '<option value="">All Categories</option>';
+                appState.categories.forEach(cat => {
+                    filterSelect.insertAdjacentHTML('beforeend', `<option value="${cat.id}">${cat.name}</option>`);
+                });
+            }
         }
 
-        /* LIGHTWEIGHT GOOGLE PIXEL NAVIGATION ANIMATION SYSTEM */
         function switchView(viewTarget) {
             const allViews = document.querySelectorAll('.app-view');
             const targetView = document.getElementById(`view-${viewTarget}`);
@@ -1303,10 +1392,10 @@
             }
             
             if(viewTarget === 'home') renderDashboardView();
-            if(viewTarget === 'analytics') renderAnalyticsView();
+            if(viewTarget === 'analytics') { populatePeriodDropdowns(); renderAnalyticsView(); }
             if(viewTarget === 'wallet') renderWalletView();
             if(viewTarget === 'budget') renderBudgetMemoView();
-            if(viewTarget === 'history') renderHistoryView();
+            if(viewTarget === 'history') { populatePeriodDropdowns(); renderHistoryView(); }
             if(viewTarget === 'settings') renderSettingsCategoryManager();
         }
 
@@ -1319,7 +1408,6 @@
             document.getElementById('modal-edit-balance').classList.add('active');
         }
 
-        /* MAIN BALANCE & AUTOMATED INCOME TRACKING ALGORITHM */
         function handleSaveDirectBalance() {
             const val = Number(document.getElementById('form-edit-balance-input').value);
             if (isNaN(val) || val < 0) return;
@@ -1331,19 +1419,15 @@
         }
 
         function renderDashboardView() {
-            /* Perhitungan Dinamis Total Income & Expense */
-            let overallIncomeLogs = appState.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
-            let totalMonthlyExpense = appState.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            const currentPeriod = getCurrentSystemPeriodKey();
+            const currentPeriodTransactions = appState.transactions.filter(t => getTransactionPeriodKey(t.date) === currentPeriod);
 
-            /* Jika data diubah lewat Overwrite Balance, selaraskan visual Income secara instan tanpa membuat riwayat palsu */
+            let overallIncomeLogs = currentPeriodTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+            let totalMonthlyExpense = currentPeriodTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+
             let displayIncome = overallIncomeLogs;
             if (overallIncomeLogs === 0 && totalMonthlyExpense === 0) {
-                displayIncome = appState.mainBalance;
-            } else {
-                let expectedIncome = appState.mainBalance + totalMonthlyExpense + appState.budgets.reduce((sum, b) => sum + Number(b.allocated), 0);
-                if (expectedIncome !== overallIncomeLogs) {
-                    displayIncome = expectedIncome;
-                }
+                displayIncome = 0;
             }
 
             document.getElementById('dash-balance').innerHTML = `${formatCurrency(appState.mainBalance)} <i class="fa-solid fa-pen-to-square" style="font-size:14px; margin-left:4px; color:var(--text-sub);"></i>`;
@@ -1581,7 +1665,6 @@
 
         function closeConfirmDelete() { document.getElementById('confirm-delete-dialog').classList.remove('active'); }
 
-        /* ======================================================== RE-ARCHITECTED BUDGET MEMO ENGINE */
         function toggleCustomPeriodDates() {
             const periodType = document.getElementById('form-memo-period-type').value;
             const container = document.getElementById('custom-period-dates-container');
@@ -1631,7 +1714,7 @@
                 document.getElementById('form-memo-id').value = m.id;
                 document.getElementById('form-memo-title').value = m.title;
                 document.getElementById('form-memo-value').value = m.value;
-                document.getElementById('form-memo-value').disabled = true; // Kunci perubahan nilai nominal pada mode edit
+                document.getElementById('form-memo-value').disabled = true; 
                 document.getElementById('form-memo-period-type').value = m.periodType || 'monthly';
                 document.getElementById('form-memo-start-date').value = m.startDate || '';
                 document.getElementById('form-memo-end-date').value = m.endDate || '';
@@ -1667,7 +1750,6 @@
                     appState.standaloneBudgets[idx].endDate = endDate;
                 }
             } else {
-                // VALIDASI & POTONG MAIN BALANCE OTOMATIS
                 if (appState.mainBalance < valueAmt) {
                     alert("⚠️ Saldo Main Balance pool tidak mencukupi untuk alokasi budget baru!");
                     return;
@@ -1681,7 +1763,7 @@
                     periodType,
                     startDate,
                     endDate,
-                    lastResetMonth: new Date().getMonth() // Menyimpan tanda bulan berjalan untuk deteksi otomatis reset
+                    lastResetMonth: new Date().getMonth() 
                 });
             }
 
@@ -1691,38 +1773,27 @@
         function deleteBudgetMemo(id) {
             const m = appState.standaloneBudgets.find(x => x.id === id);
             if(m) {
-                // PULANGKAN DANA KE MAIN BALANCE KETIKA BUDGET DIHAPUS
                 appState.mainBalance += Number(m.value);
             }
             appState.standaloneBudgets = appState.standaloneBudgets.filter(m => m.id !== id);
             saveToStorage(); renderBudgetMemoView();
         }
 
-        /* ENGINE DETEKSI PARSE WAKTU: COCOKAN PERIODE UNTUK AUTOMATED RESET ENGINE */
         function evaluatePeriodBudgetResets() {
             const today = new Date();
             let stateUpdated = false;
 
             appState.standaloneBudgets.forEach(b => {
                 if (b.periodType === 'monthly') {
-                    // Cek jika bulan saat ini sudah berubah dari bulan terakhir reset
                     if (b.lastResetMonth !== undefined && today.getMonth() !== b.lastResetMonth) {
                         b.lastResetMonth = today.getMonth();
                         stateUpdated = true;
-                        // Logika Reset: Anggap dana aman/kembali diproses ulang dari nol ril
-                    }
-                } else if (b.periodType === 'custom' && b.endDate) {
-                    const expirationDate = new Date(b.endDate);
-                    // Jika melewati tanggal custom pengakhiran, set alert atau penanda kedaluwarsa
-                    if (today > expirationDate) {
-                        // Dapat diimplementasikan sistem pembersihan otomatis atau penanda masa berlaku habis disini
                     }
                 }
             });
 
             if (stateUpdated) saveToStorage();
         }
-        /* =========================================================================================== */
 
         function openTransactionModal(type) {
             activeTxType = type;
@@ -1814,8 +1885,13 @@
         }
 
         function renderAnalyticsView() {
+            const periodSelect = document.getElementById('analytics-period-select');
+            const targetPeriod = periodSelect ? periodSelect.value : getCurrentSystemPeriodKey();
+
+            const periodTx = appState.transactions.filter(t => getTransactionPeriodKey(t.date) === targetPeriod);
+
             let totalWalletsPoolSum = appState.budgets.reduce((sum, b) => sum + Number(b.allocated), 0);
-            let totalSpent = appState.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            let totalSpent = periodTx.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
             let aggregateAssets = totalWalletsPoolSum + appState.mainBalance;
             
             document.getElementById('an-allocated').innerText = formatCurrency(totalWalletsPoolSum);
@@ -1825,7 +1901,7 @@
 
             let catMap = {};
             appState.categories.forEach(c => catMap[c.id] = 0);
-            appState.transactions.filter(t => t.type === 'expense').forEach(t => {
+            periodTx.filter(t => t.type === 'expense').forEach(t => {
                 if(catMap[t.categoryId] !== undefined) catMap[t.categoryId] += Number(t.amount);
             });
 
@@ -1834,13 +1910,13 @@
             document.getElementById('an-top-spending').innerText = topValue > 0 ? `${topCatName}` : "-";
             
             document.getElementById('analytics-smart-insight-box').innerText = topValue > 0 ? 
-                `📊 Sektor paling konsumtif: ${topCatName} (${formatCurrency(topValue)}). Selalu evaluasi target alokasi budget berkala Anda.` : 
+                `📊 Sektor paling konsumtif periode ${parsePeriodKeyToLabel(targetPeriod)}: ${topCatName} (${formatCurrency(topValue)}).` : 
                 `✨ Struktur database aman. Buat alokasi Target Budget baru sesuai kebutuhan finansial ril.`;
 
-            setTimeout(renderAnalyticsCharts, 50);
+            setTimeout(() => renderAnalyticsCharts(periodTx), 50);
         }
 
-        function renderAnalyticsCharts() {
+        function renderAnalyticsCharts(filteredTransactions) {
             const ctxPie = document.getElementById('chartPie');
             if(ctxPie) {
                 let labels = ["Main Balance Pool"];
@@ -1874,7 +1950,7 @@
                 
                 for(let k=0; k<7; k++) {
                     timelineLabels.push(trackingDate.getDate() + " " + trackingDate.toLocaleString('en-US', { month: 'short' }));
-                    let daySum = appState.transactions
+                    let daySum = filteredTransactions
                         .filter(t => t.type === 'expense' && new Date(t.date).toDateString() === trackingDate.toDateString())
                         .reduce((sum, t) => sum + Number(t.amount), 0);
                     dailyDataPoints.push(daySum);
@@ -1893,17 +1969,29 @@
         function renderHistoryView() {
             const search = document.getElementById('history-search').value.toLowerCase();
             const filterCat = document.getElementById('history-filter-category').value;
+            const periodSelect = document.getElementById('history-period-select');
+            const targetPeriod = periodSelect ? periodSelect.value : getCurrentSystemPeriodKey();
+
             const list = document.getElementById('history-master-list');
             list.innerHTML = '';
 
             let filtered = appState.transactions.filter(t => {
                 let matchesSearch = t.note.toLowerCase().includes(search) || t.amount.toString().includes(search);
                 let matchesCat = filterCat ? (t.categoryId === filterCat) : true;
-                return matchesSearch && matchesCat;
+                let matchesPeriod = getTransactionPeriodKey(t.date) === targetPeriod;
+                return matchesSearch && matchesCat && matchesPeriod;
             });
 
+            let periodIncome = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
+            let periodExpense = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
+            
+            document.getElementById('history-period-summary').innerHTML = `
+                <span style="color:#73D39C;">Income: ${formatCurrency(periodIncome)}</span>
+                <span style="color:#FFA1B8;">Expense: ${formatCurrency(periodExpense)}</span>
+            `;
+
             if(filtered.length === 0) {
-                list.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:10px 0;">Logs empty.</p>';
+                list.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:10px 0;">No logs in this period.</p>';
                 return;
             }
 
@@ -1985,18 +2073,20 @@
 
         function renderSettingsCategoryManager() {
             const container = document.getElementById('settings-category-list-container');
-            container.innerHTML = '';
-            appState.categories.forEach(cat => {
-                container.insertAdjacentHTML('beforeend', `
-                    <div style="display:flex; justify-content:between; align-items:center; background:#FAF9FE; padding:10px 14px; border-radius:12px; margin-bottom:8px; border:1px solid rgba(158,148,178,0.1);">
-                        <div style="display:flex; align-items:center; gap:10px; width:80%;">
-                            <div style="width:14px; height:14px; border-radius:4px; background:${cat.color}"></div>
-                            <span style="font-size:13px; font-weight:700;">${cat.name}</span>
+            if (container) {
+                container.innerHTML = '';
+                appState.categories.forEach(cat => {
+                    container.insertAdjacentHTML('beforeend', `
+                        <div style="display:flex; justify-content:between; align-items:center; background:#FAF9FE; padding:10px 14px; border-radius:12px; margin-bottom:8px; border:1px solid rgba(158,148,178,0.1);">
+                            <div style="display:flex; align-items:center; gap:10px; width:80%;">
+                                <div style="width:14px; height:14px; border-radius:4px; background:${cat.color}"></div>
+                                <span style="font-size:13px; font-weight:700;">${cat.name}</span>
+                            </div>
+                            <button class="budget-action-icon-btn delete-trigger" onclick="deleteCategoryFromSettings('${cat.id}')"><i class="fa-solid fa-trash-can" style="font-size:11px;"></i></button>
                         </div>
-                        <button class="budget-action-icon-btn delete-trigger" onclick="deleteCategoryFromSettings('${cat.id}')"><i class="fa-solid fa-trash-can" style="font-size:11px;"></i></button>
-                    </div>
-                `);
-            });
+                    `);
+                });
+            }
         }
 
         function createNewCategoryFromSettings() {
@@ -2018,112 +2108,120 @@
 
         function saveProfileSettings() {
             const name = document.getElementById('settings-username').value.trim();
-            if(name) { appState.user = name; saveToStorage(); renderHeaderUI(); alert("Profil diperbarui!"); }
+            if(name) { 
+                appState.user = name; 
+                saveToStorage(); 
+                renderHeaderUI(); 
+                alert("Profile Updated Successfully!"); 
+            }
         }
 
         function buildFormPalettes() {
             const colorGrid = document.getElementById('form-color-grid');
-            colorGrid.innerHTML = '';
-            presetColors.forEach(color => {
-                colorGrid.insertAdjacentHTML('beforeend', `<div class="color-dot-option" data-color="${color}" style="background:${color}" onclick="selectFormColor(this)"></div>`);
-            });
-
+            if(colorGrid) {
+                colorGrid.innerHTML = presetColors.map(c => `<div class="color-dot-option" data-color="${c}" style="background:${c};" onclick="selectFormColorAsset('${c}')"></div>`).join('');
+            }
             const iconGrid = document.getElementById('form-icon-grid');
-            iconGrid.innerHTML = '';
-            presetIconsList.forEach(icon => {
-                iconGrid.insertAdjacentHTML('beforeend', `<div class="icon-box-option" data-icon="${icon}" onclick="selectFormIcon(this)"><i class="fa-solid ${icon}"></i></div>`);
-            });
+            if(iconGrid) {
+                iconGrid.innerHTML = presetIconsList.map(ico => `<div class="icon-box-option" data-icon="${ico}" onclick="selectFormIconAsset('${ico}')"><i class="fa-solid ${ico}"></i></div>`).join('');
+            }
         }
 
-        function selectFormColor(el) {
-            document.querySelectorAll('.color-dot-option').forEach(x => x.classList.remove('active'));
-            el.classList.add('active'); selectedFormColor = el.getAttribute('data-color');
+        function selectFormColorAsset(c) { 
+            selectedFormColor = c; 
+            document.querySelectorAll('.color-dot-option').forEach(el => el.classList.toggle('active', el.getAttribute('data-color') === c));
         }
-
-        function selectFormIcon(el) {
-            document.querySelectorAll('.icon-box-option').forEach(x => x.classList.remove('active'));
-            el.classList.add('active'); selectedFormIcon = el.getAttribute('data-icon');
+        function selectFormIconAsset(ico) { 
+            selectedFormIcon = ico; 
+            document.querySelectorAll('.icon-box-option').forEach(el => el.classList.toggle('active', el.getAttribute('data-icon') === ico));
         }
 
         function toggleCustomCategoryField() {
-            const select = document.getElementById('tx-category-select');
-            const customInput = document.getElementById('tx-custom-category-input');
-            if(select.value === 'ADD_NEW_CUSTOM') customInput.classList.remove('hidden');
-            else customInput.classList.add('hidden');
+            const val = document.getElementById('tx-category-select').value;
+            document.getElementById('tx-custom-category-input').classList.toggle('hidden', val !== 'ADD_NEW_CUSTOM');
         }
 
         function openQuickTypeModal() {
+            const qws = document.getElementById('quick-wallet-select');
+            qws.innerHTML = '<option value="main">Main Balance Pool</option>';
+            appState.budgets.forEach(w => qws.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`));
             document.getElementById('quick-input-text').value = '';
-            const wSelect = document.getElementById('quick-wallet-select');
-            wSelect.innerHTML = '<option value="main">Main Balance Pool</option>';
-            appState.budgets.forEach(w => { wSelect.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`); });
             document.getElementById('modal-quick-type').classList.add('active');
         }
 
         function executeQuickNlpDetection() {
-            const raw = document.getElementById('quick-input-text').value.trim();
-            if(!raw) return;
-            const targetWalletId = document.getElementById('quick-wallet-select').value;
-            const numbers = raw.match(/\d+/g);
-            if(!numbers) { alert("Nominal angka pengeluaran gagal dideteksi."); return; }
-            const detectedAmount = Number(numbers[numbers.length - 1]);
+            const text = document.getElementById('quick-input-text').value.trim();
+            const walletId = document.getElementById('quick-wallet-select').value;
+            if(!text) return;
 
-            let memo = raw.replace(detectedAmount.toString(), '').trim();
-            if(memo.length > 30) memo = memo.substring(0, 30) + "...";
-            if(!memo) memo = "Quick Expense Log";
+            let numMatch = text.match(/\d+/g);
+            if(!numMatch) { alert("⚠️ Tidak mendeteksi nominal angka transaksi."); return; }
+            let amount = Number(numMatch[numMatch.length - 1]);
 
-            if(targetWalletId === 'main') {
-                if(appState.mainBalance < detectedAmount) { alert("Saldo Main Pool tidak cukup."); return; }
-                appState.mainBalance -= detectedAmount;
+            let cleanMemo = text.replace(amount.toString(), '').replace(/di\s+\S+/i, '').trim();
+            if(!cleanMemo) cleanMemo = "Quick Type Log";
+
+            let matchedCategoryId = appState.categories[0].id;
+            for(let cat of appState.categories) {
+                if(text.toLowerCase().includes(cat.name.toLowerCase())) { matchedCategoryId = cat.id; break; }
+            }
+
+            if (walletId === 'main') {
+                if (appState.mainBalance < amount) { alert("⚠️ Saldo Main Balance kurang!"); return; }
+                appState.mainBalance -= amount;
             } else {
-                let w = appState.budgets.find(x => x.id === targetWalletId);
-                if(!w || w.allocated < detectedAmount) { alert("Saldo Dompet tidak cukup."); return; }
-                w.allocated -= detectedAmount;
+                let wIdx = appState.budgets.findIndex(w => w.id === walletId);
+                if (wIdx !== -1) {
+                    if (appState.budgets[wIdx].allocated < amount) { alert("⚠️ Saldo Dompet kurang!"); return; }
+                    appState.budgets[wIdx].allocated -= amount;
+                }
             }
 
             appState.transactions.push({
                 id: "tx_" + Date.now(),
                 type: 'expense',
-                amount: detectedAmount,
-                walletId: targetWalletId,
-                categoryId: appState.categories[0].id,
-                note: memo,
+                amount: amount,
+                walletId: walletId,
+                categoryId: matchedCategoryId,
+                note: cleanMemo,
                 date: new Date().toISOString()
             });
 
             saveToStorage(); closeAllModals(); renderDashboardView();
         }
 
+        function closeActiveModal(event) { if(event.target.classList.contains('modal-overlay')) closeAllModals(); }
+        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+
         function backupDatabaseToJson() {
-            const blob = new Blob([JSON.stringify(appState, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `clarity_database_backup_${Date.now()}.json`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `clarity_database_backup_${Date.now()}.json`);
+            dlAnchor.click();
         }
-
         function triggerRestoreInputClick() { document.getElementById('restore-file-input').click(); }
-        function restoreDatabaseFromJson(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) {
+        function restoreDatabaseFromJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const r = new FileReader();
+            r.onload = function(e) {
                 try {
-                    const parsed = JSON.parse(evt.target.result);
-                    if(parsed.hasOwnProperty('mainBalance') && parsed.hasOwnProperty('budgets')) {
-                        appState = parsed; saveToStorage(); renderHeaderUI(); switchView('home'); alert("Database Restored Successfully!");
-                    } else { alert("File JSON tidak kompatibel."); }
-                } catch(err) { alert("Gagal memparsing struktur data."); }
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && typeof parsed === 'object') {
+                        appState = parsed;
+                        saveToStorage(); renderHeaderUI(); renderDashboardView();
+                        alert("Database restored successfully!");
+                    }
+                } catch(err) { alert("Gagal memparsing file JSON."); }
             };
-            reader.readAsText(file);
+            r.readAsText(file);
         }
-
         function triggerResetSystemEngine() {
-            if(confirm("Apakah Anda yakin ingin menghapus seluruh parameter database? Semua catatan saldo, dompet, dan riwayat akan kembali ke titik nol bersih.")) {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh parameter engine? Semua riwayat transaksi akan terhapus.")) {
                 loadInitialDummyDataset(); renderHeaderUI(); switchView('home');
             }
         }
-
-        function closeActiveModal(e) { if(e.target.classList.contains('modal-overlay')) closeAllModals(); }
-        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
     </script>
 </body>
 </html>
