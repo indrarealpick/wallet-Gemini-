@@ -914,7 +914,7 @@
                 </select>
             </div>
 
-            <div class="floating-card" style="background: linear-gradient(135deg, #FFF 0%, #FBFBFF 100%);">
+            <div class="floating-card" style="background: linear-gradient(135deg, #FFF 0%, #FBFBFF(100%);">
                 <h4 style="font-size:14px; margin-bottom:12px; font-weight:800;">Core Analytics Engine</h4>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">
                     <div><p style="color:var(--text-sub);">Wallets Asset Pool:</p><b id="an-allocated" style="font-size:15px;">¥0</b></div>
@@ -1232,6 +1232,9 @@
             buildFormPalettes();
             populatePeriodDropdowns();
             switchView('home');
+            
+            // Jalankan interval realtime penyesuaian waktu device setiap 1 menit (60000ms)
+            setInterval(renderHeaderUI, 60000);
         });
 
         // ======================== LOGIC SYSTEM PERIOD RE-ENGINEERED (15 -> 15 NEXT MONTH) ========================
@@ -1357,7 +1360,19 @@
         }
 
         function renderHeaderUI() {
-            document.getElementById('header-greeting').innerText = `Good Evening, ${appState.user}`;
+            // Logika kalkulasi greeting teks adaptif realtime berbasis waktu device lokal user
+            const currentHour = new Date().getHours();
+            let greetingStr = "Good Evening"; // default fallback
+
+            if (currentHour >= 5 && currentHour < 12) {
+                greetingStr = "Good Morning";
+            } else if (currentHour >= 12 && currentHour < 18) {
+                greetingStr = "Good Afternoon";
+            } else {
+                greetingStr = "Good Evening";
+            }
+
+            document.getElementById('header-greeting').innerText = `${greetingStr}, ${appState.user}`;
             document.getElementById('header-period').innerText = `${parsePeriodKeyToLabel(getCurrentSystemPeriodKey())}`;
             document.getElementById('settings-username').value = appState.user;
             
@@ -2142,86 +2157,73 @@
         }
 
         function openQuickTypeModal() {
-            const qws = document.getElementById('quick-wallet-select');
-            qws.innerHTML = '<option value="main">Main Balance Pool</option>';
-            appState.budgets.forEach(w => qws.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`));
+            const select = document.getElementById('quick-wallet-select');
+            select.innerHTML = '<option value="main">Main Balance Pool</option>';
+            appState.budgets.forEach(w => { select.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`); });
             document.getElementById('quick-input-text').value = '';
             document.getElementById('modal-quick-type').classList.add('active');
         }
 
         function executeQuickNlpDetection() {
-            const text = document.getElementById('quick-input-text').value.trim();
+            const txt = document.getElementById('quick-input-text').value.trim();
             const walletId = document.getElementById('quick-wallet-select').value;
-            if(!text) return;
+            if(!txt) return;
 
-            let numMatch = text.match(/\d+/g);
-            if(!numMatch) { alert("⚠️ Tidak mendeteksi nominal angka transaksi."); return; }
-            let amount = Number(numMatch[numMatch.length - 1]);
+            const numMatch = txt.match(/\d+/);
+            const amt = numMatch ? Number(numMatch[0]) : 0;
+            if(amt <= 0) { alert("Nominal tidak terdeteksi."); return; }
 
-            let cleanMemo = text.replace(amount.toString(), '').replace(/di\s+\S+/i, '').trim();
-            if(!cleanMemo) cleanMemo = "Quick Type Log";
-
+            let note = txt.replace(/\d+/, '').trim();
             let matchedCategoryId = appState.categories[0].id;
+
             for(let cat of appState.categories) {
-                if(text.toLowerCase().includes(cat.name.toLowerCase())) { matchedCategoryId = cat.id; break; }
+                if(txt.toLowerCase().includes(cat.name.toLowerCase())) { matchedCategoryId = cat.id; break; }
             }
 
-            if (walletId === 'main') {
-                if (appState.mainBalance < amount) { alert("⚠️ Saldo Main Balance kurang!"); return; }
-                appState.mainBalance -= amount;
+            if(walletId === 'main') {
+                if(appState.mainBalance < amt) { alert("Main balance kurang"); return; }
+                appState.mainBalance -= amt;
             } else {
-                let wIdx = appState.budgets.findIndex(w => w.id === walletId);
-                if (wIdx !== -1) {
-                    if (appState.budgets[wIdx].allocated < amount) { alert("⚠️ Saldo Dompet kurang!"); return; }
-                    appState.budgets[wIdx].allocated -= amount;
-                }
+                let w = appState.budgets.find(x => x.id === walletId);
+                if(w) { if(w.allocated < amt) { alert("Saldo dompet kurang"); return; } w.allocated -= amt; }
             }
 
             appState.transactions.push({
-                id: "tx_" + Date.now(),
-                type: 'expense',
-                amount: amount,
-                walletId: walletId,
-                categoryId: matchedCategoryId,
-                note: cleanMemo,
-                date: new Date().toISOString()
+                id: "tx_" + Date.now(), type: 'expense', amount: amt, walletId, categoryId: matchedCategoryId, note: note || "Quick Type", date: new Date().toISOString()
             });
 
             saveToStorage(); closeAllModals(); renderDashboardView();
         }
-
-        function closeActiveModal(event) { if(event.target.classList.contains('modal-overlay')) closeAllModals(); }
-        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
 
         function backupDatabaseToJson() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
             dlAnchor.setAttribute("download", `clarity_database_backup_${Date.now()}.json`);
-            dlAnchor.click();
+            document.body.appendChild(dlAnchor); dlAnchor.click(); dlAnchor.remove();
         }
         function triggerRestoreInputClick() { document.getElementById('restore-file-input').click(); }
         function restoreDatabaseFromJson(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const r = new FileReader();
             r.onload = function(e) {
                 try {
                     const parsed = JSON.parse(e.target.result);
-                    if (parsed && typeof parsed === 'object') {
-                        appState = parsed;
-                        saveToStorage(); renderHeaderUI(); renderDashboardView();
-                        alert("Database restored successfully!");
-                    }
-                } catch(err) { alert("Gagal memparsing file JSON."); }
+                    if(parsed.user && parsed.categories) {
+                        appState = parsed; saveToStorage(); renderHeaderUI(); renderDashboardView(); alert("Database Restored!");
+                    } else { alert("Invalid File Format Structure."); }
+                } catch(err) { alert("Error reading json data structure."); }
             };
             r.readAsText(file);
         }
         function triggerResetSystemEngine() {
-            if(confirm("Apakah Anda yakin ingin mereset seluruh parameter engine? Semua riwayat transaksi akan terhapus.")) {
-                loadInitialDummyDataset(); renderHeaderUI(); switchView('home');
+            if(confirm("Apakah anda yakin ingin mereset seluruh database parameter finansial Anda?")) {
+                localStorage.removeItem('clarity_envelope_engine_v6'); loadInitialDummyDataset(); renderHeaderUI(); switchView('home');
             }
         }
+
+        function closeActiveModal(e) { if(e.target.classList.contains('modal-overlay')) closeAllModals(); }
+        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
     </script>
 </body>
 </html>
