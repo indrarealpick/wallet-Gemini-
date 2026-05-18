@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Clarity - Dreamy Pastel Finance Tracker</title>
@@ -1608,7 +1605,7 @@
                 document.getElementById('form-wallet-id').value = w.id;
                 document.getElementById('form-wallet-name').value = w.name;
                 document.getElementById('form-wallet-limit').value = w.allocated;
-                document.getElementById('form-wallet-limit').disabled = true; 
+                document.getElementById('form-wallet-limit').disabled = false; 
                 selectedFormColor = w.color;
                 selectedFormIcon = w.iconClass || presetIconsList[0];
             } else {
@@ -1636,11 +1633,26 @@
             const valueAmt = Number(document.getElementById('form-wallet-limit').value);
             const id = document.getElementById('form-wallet-id').value;
 
-            if(!name || valueAmt < 0) return;
+            if(!name || isNaN(valueAmt) || valueAmt < 0) return;
 
             if(id) {
                 const idx = appState.budgets.findIndex(b => b.id === id);
-                if(idx !== -1) appState.budgets[idx].name = name;
+                if(idx !== -1) {
+                    const oldAmount = Number(appState.budgets[idx].allocated);
+                    const diff = valueAmt - oldAmount;
+
+                    if (appState.mainBalance < diff) {
+                        alert("⚠️ Saldo Main Balance tidak cukup untuk perubahan alokasi ini!");
+                        return;
+                    }
+
+                    appState.mainBalance -= diff;
+                    appState.budgets[idx].name = name;
+                    appState.budgets[idx].allocated = valueAmt;
+                    appState.budgets[idx].maxLimit = valueAmt;
+                    appState.budgets[idx].color = selectedFormColor;
+                    appState.budgets[idx].iconClass = selectedFormIcon;
+                }
             } else {
                 if (appState.mainBalance < valueAmt) {
                     alert("⚠️ Saldo Main Balance tidak cukup untuk dialokasikan ke dompet baru!");
@@ -1732,7 +1744,7 @@
                 document.getElementById('form-memo-id').value = m.id;
                 document.getElementById('form-memo-title').value = m.title;
                 document.getElementById('form-memo-value').value = m.value;
-                document.getElementById('form-memo-value').disabled = true; 
+                document.getElementById('form-memo-value').disabled = false; 
                 document.getElementById('form-memo-period-type').value = m.periodType || 'monthly';
                 document.getElementById('form-memo-start-date').value = m.startDate || '';
                 document.getElementById('form-memo-end-date').value = m.endDate || '';
@@ -1762,7 +1774,17 @@
             if(id) {
                 const idx = appState.standaloneBudgets.findIndex(m => m.id === id);
                 if(idx !== -1) {
+                    const oldAmount = Number(appState.standaloneBudgets[idx].value);
+                    const diff = valueAmt - oldAmount;
+
+                    if (appState.mainBalance < diff) {
+                        alert("⚠️ Saldo Main Balance tidak cukup untuk perubahan alokasi budget ini!");
+                        return;
+                    }
+
+                    appState.mainBalance -= diff;
                     appState.standaloneBudgets[idx].title = title;
+                    appState.standaloneBudgets[idx].value = valueAmt;
                     appState.standaloneBudgets[idx].periodType = periodType;
                     appState.standaloneBudgets[idx].startDate = startDate;
                     appState.standaloneBudgets[idx].endDate = endDate;
@@ -2137,96 +2159,118 @@
         function buildFormPalettes() {
             const colorGrid = document.getElementById('form-color-grid');
             if(colorGrid) {
-                colorGrid.innerHTML = presetColors.map(c => `<div class="color-dot-option" data-color="${c}" style="background:${c};" onclick="selectFormColorAsset('${c}')"></div>`).join('');
+                colorGrid.innerHTML = presetColors.map(c => `<div class="color-dot-option" data-color="${c}" style="background:${c};"></div>`).join('');
+                colorGrid.addEventListener('click', (e) => {
+                    const dot = e.target.closest('.color-dot-option');
+                    if(!dot) return;
+                    document.querySelectorAll('.color-dot-option').forEach(el => el.classList.remove('active'));
+                    dot.classList.add('active');
+                    selectedFormColor = dot.getAttribute('data-color');
+                });
             }
+
             const iconGrid = document.getElementById('form-icon-grid');
             if(iconGrid) {
-                iconGrid.innerHTML = presetIconsList.map(ico => `<div class="icon-box-option" data-icon="${ico}" onclick="selectFormIconAsset('${ico}')"><i class="fa-solid ${ico}"></i></div>`).join('');
+                iconGrid.innerHTML = presetIconsList.map(i => `<div class="icon-box-option" data-icon="${i}"><i class="fa-solid ${i}"></i></div>`).join('');
+                iconGrid.addEventListener('click', (e) => {
+                    const box = e.target.closest('.icon-box-option');
+                    if(!box) return;
+                    document.querySelectorAll('.icon-box-option').forEach(el => el.classList.remove('active'));
+                    box.classList.add('active');
+                    selectedFormIcon = box.getAttribute('data-icon');
+                });
             }
-        }
-
-        function selectFormColorAsset(c) { 
-            selectedFormColor = c; 
-            document.querySelectorAll('.color-dot-option').forEach(el => el.classList.toggle('active', el.getAttribute('data-color') === c));
-        }
-        function selectFormIconAsset(ico) { 
-            selectedFormIcon = ico; 
-            document.querySelectorAll('.icon-box-option').forEach(el => el.classList.toggle('active', el.getAttribute('data-icon') === ico));
-        }
-
-        function toggleCustomCategoryField() {
-            const val = document.getElementById('tx-category-select').value;
-            document.getElementById('tx-custom-category-input').classList.toggle('hidden', val !== 'ADD_NEW_CUSTOM');
         }
 
         function openQuickTypeModal() {
-            const select = document.getElementById('quick-wallet-select');
-            select.innerHTML = '<option value="main">Main Balance Pool</option>';
-            appState.budgets.forEach(w => { select.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`); });
             document.getElementById('quick-input-text').value = '';
+            const sel = document.getElementById('quick-wallet-select');
+            sel.innerHTML = '<option value="main">Main Balance Pool</option>';
+            appState.budgets.forEach(w => {
+                sel.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`);
+            });
             document.getElementById('modal-quick-type').classList.add('active');
         }
 
         function executeQuickNlpDetection() {
-            const txt = document.getElementById('quick-input-text').value.trim();
+            const text = document.getElementById('quick-input-text').value.trim();
             const walletId = document.getElementById('quick-wallet-select').value;
-            if(!txt) return;
+            if(!text) return;
 
-            const numMatch = txt.match(/\d+/);
-            const amt = numMatch ? Number(numMatch[0]) : 0;
-            if(amt <= 0) { alert("Nominal tidak terdeteksi."); return; }
+            const numMatch = text.match(/\d+/);
+            if(!numMatch) { alert("⚠️ Tidak mendeteksi nominal angka transaksi di dalam teks."); return; }
+            const detectedAmount = Number(numMatch[0]);
 
-            let note = txt.replace(/\d+/, '').trim();
-            let matchedCategoryId = appState.categories[0].id;
+            let cleanMemo = text.replace(numMatch[0], '').trim();
+            let finalCategory = appState.categories[0].id;
 
-            for(let cat of appState.categories) {
-                if(txt.toLowerCase().includes(cat.name.toLowerCase())) { matchedCategoryId = cat.id; break; }
-            }
+            appState.categories.forEach(c => {
+                if(text.toLowerCase().includes(c.name.toLowerCase())) { finalCategory = c.id; }
+            });
 
-            if(walletId === 'main') {
-                if(appState.mainBalance < amt) { alert("Main balance kurang"); return; }
-                appState.mainBalance -= amt;
+            if (walletId === 'main') {
+                if(appState.mainBalance < detectedAmount) { alert("⚠️ Saldo Main Pool tidak cukup!"); return; }
+                appState.mainBalance -= detectedAmount;
             } else {
-                let w = appState.budgets.find(x => x.id === walletId);
-                if(w) { if(w.allocated < amt) { alert("Saldo dompet kurang"); return; } w.allocated -= amt; }
+                let wIdx = appState.budgets.findIndex(w => w.id === walletId);
+                if(wIdx !== -1) {
+                    if(appState.budgets[wIdx].allocated < detectedAmount) { alert("⚠️ Saldo Dompet terpilih tidak cukup!"); return; }
+                    appState.budgets[wIdx].allocated -= detectedAmount;
+                }
             }
 
             appState.transactions.push({
-                id: "tx_" + Date.now(), type: 'expense', amount: amt, walletId, categoryId: matchedCategoryId, note: note || "Quick Type", date: new Date().toISOString()
+                id: "tx_" + Date.now(),
+                type: 'expense',
+                amount: detectedAmount,
+                walletId: walletId,
+                categoryId: finalCategory,
+                note: cleanMemo || "Ketik Cepat Log",
+                date: new Date().toISOString()
             });
 
             saveToStorage(); closeAllModals(); renderDashboardView();
         }
 
+        function toggleCustomCategoryField() {
+            const select = document.getElementById('tx-category-select');
+            const customInput = document.getElementById('tx-custom-category-input');
+            if(select.value === 'ADD_NEW_CUSTOM') { customInput.classList.remove('hidden'); customInput.focus(); }
+            else { customInput.classList.add('hidden'); }
+        }
+
+        function closeActiveModal(event) { if(event.target.classList.contains('modal-overlay')) closeAllModals(); }
+        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+
         function backupDatabaseToJson() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `clarity_database_backup_${Date.now()}.json`);
-            document.body.appendChild(dlAnchor); dlAnchor.click(); dlAnchor.remove();
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `clarity_database_backup_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor); downloadAnchor.click(); downloadAnchor.remove();
         }
+
         function triggerRestoreInputClick() { document.getElementById('restore-file-input').click(); }
+
         function restoreDatabaseFromJson(event) {
             const file = event.target.files[0]; if (!file) return;
-            const r = new FileReader();
-            r.onload = function(e) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
                 try {
                     const parsed = JSON.parse(e.target.result);
-                    if(parsed.user && parsed.categories) {
-                        appState = parsed; saveToStorage(); renderHeaderUI(); renderDashboardView(); alert("Database Restored!");
-                    } else { alert("Invalid File Format Structure."); }
-                } catch(err) { alert("Error reading json data structure."); }
+                    if (parsed.user && typeof parsed.mainBalance === 'number') {
+                        appState = parsed; saveToStorage(); initializeStorageEngine(); renderHeaderUI(); switchView('home'); alert("Database Restored Successfully!");
+                    } else { alert("Format berkas JSON tidak valid untuk engine Clarity."); }
+                } catch(err) { alert("Gagal membaca berkas JSON."); }
             };
-            r.readAsText(file);
+            reader.readAsText(file);
         }
+
         function triggerResetSystemEngine() {
-            if(confirm("Apakah anda yakin ingin mereset seluruh database parameter finansial Anda?")) {
+            if(confirm("Apakah Anda yakin ingin melakukan reset total engine parameter? Semua riwayat saldo, catatan budget, dompet, dan logs transaksi akan terhapus permanen.")) {
                 localStorage.removeItem('clarity_envelope_engine_v6'); loadInitialDummyDataset(); renderHeaderUI(); switchView('home');
             }
         }
-
-        function closeActiveModal(e) { if(e.target.classList.contains('modal-overlay')) closeAllModals(); }
-        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
     </script>
 </body>
 </html>
