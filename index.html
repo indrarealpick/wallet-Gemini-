@@ -4,14 +4,14 @@
     <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#a9ecff">
+<meta name="theme-color" content="#ccff00">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Clarity - Dreamy Pastel Finance Tracker</title>
+    <title>Clarity — Neo Brutalism Finance</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=500;600;700;800&family=Quicksand:wght=500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,49 +19,46 @@
 
     <style>
         :root {
-            /* RE-ENGINEERED TO DREAMY BLUE & PINK PASTEL PALETTE */
-            --bg-gradient-1: #E3F2FD; /* Soft Pastel Blue */
-            --bg-gradient-2: #FFDBE9; /* Dreamy Baby Pink */
-            --bg-gradient-3: #F1EAFF; /* Soft Lavender */
-            --bg-gradient-4: #E8F9FF; /* Fresh Cyan Glow */
-            --bg-gradient-5: #FAFAFE; /* Creamy White */
-            --card-bg: rgba(255, 255, 255, 0.75);
-            --card-bg-pure: #ffffff;
-            --text-main: #433D52; /* Aesthetic Soft Charcoal */
-            --text-sub: #9E94B2; /* Smooth Pastel Violet-Grey */
-            
-            /* Premium Core Tokens */
-            --pastel-purple: #C2B0FF; /* Soft Lavender Core */
-            --pastel-pink: #FFC0D9; /* Baby Pink Core */
-            --pastel-blue: #A9ECFF; /* Cyan Glow Core */
-            --pastel-green: #CAFFDF; /* Pastel Mint Accent */
-            --pastel-orange: #FFE5CC; /* Warm Soft Cream Accent */
-            
-            --radius-large: 32px;
-            --radius-medium: 20px;
-            
-            /* Futuristic Soft Ambient Glows & Shadows */
-            --shadow-soft: 0 20px 40px rgba(255, 192, 217, 0.25);
-            --shadow-card: 0 15px 35px rgba(169, 236, 255, 0.25), 0 10px 20px rgba(241, 234, 255, 0.2);
-            
-            /* GOOGLE PIXEL ACCELERATED TRANSITIONS (FAST & SNAPPY) */
+            --bg: #F8F8F8;
+            --primary: #ccff00;
+            --primary-dark: #99cc00;
+            --black: #171717;
+            --white: #FFFFFF;
+            --green: #22C55E;
+            --red: #EF4444;
+            --yellow: #FACC15;
+            --text-main: #171717;
+            --text-sub: #555555;
+            --card-bg: #FFFFFF;
+            --border: 3px solid #171717;
+            --radius-large: 20px;
+            --radius-medium: 16px;
+            --shadow-brutal: 8px 8px 0px #171717;
+            --shadow-brutal-sm: 5px 5px 0px #171717;
+            --shadow-brutal-xs: 4px 4px 0px #171717;
             --pixel-ease: cubic-bezier(0.05, 0.7, 0.1, 1);
-            --transition-smooth: all 0.25s var(--pixel-ease);
+            --transition-smooth: all 0.2s var(--pixel-ease);
+            /* Alias for backward-compat with JS inline styles */
+            --pastel-purple: #ccff00;
+            --pastel-pink: #F3E8FF;
+            --pastel-blue: #EDE9FE;
+            --pastel-green: #DCFCE7;
+            --pastel-orange: #FEF9C3;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', 'Quicksand', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            /* Animated Pastel Orb Mesh Gradient Design */
-            background: linear-gradient(135deg, var(--bg-gradient-5) 0%, var(--bg-gradient-4) 20%, var(--bg-gradient-2) 45%, var(--bg-gradient-3) 70%, var(--bg-gradient-1) 100%);
-            background-size: 300% 300%;
-            animation: meshGradient 15s ease infinite;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(204,255,0,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(34,197,94,0.06) 0%, transparent 50%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -71,12 +68,6 @@
             padding-bottom: 120px;
         }
 
-        @keyframes meshGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .app-container {
             width: 100%;
             max-width: 430px;
@@ -84,7 +75,6 @@
             position: relative;
         }
 
-        /* LIGHTWEIGHT GOOGLE PIXEL SNAPPY VIEW ANIMATION */
         .app-view {
             opacity: 0;
             transform: scale(0.96);
@@ -92,30 +82,33 @@
             display: none;
             will-change: transform, opacity;
         }
-
         .app-view.view-visible { display: block !important; }
         .app-view.view-active { opacity: 1; transform: scale(1); }
-        
+
+        /* ====== FLOATING CARD = NEO BRUTALISM CARD ====== */
         .floating-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: var(--white);
+            border: var(--border);
             border-radius: var(--radius-large);
             padding: 24px;
             margin-bottom: 20px;
-            box-shadow: var(--shadow-card);
-            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-brutal);
+            transition: transform 0.15s var(--pixel-ease), box-shadow 0.15s var(--pixel-ease);
             position: relative;
             overflow: hidden;
         }
+        .floating-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 10px 10px 0px #171717;
+        }
 
+        /* ====== APP HEADER ====== */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            padding: 0 8px;
+            padding: 0 4px;
         }
 
         .user-greeting h1 {
@@ -124,227 +117,137 @@
             color: var(--text-main);
             letter-spacing: -0.5px;
         }
-
         .user-greeting p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-sub);
             font-weight: 600;
             margin-top: 2px;
         }
 
-        /* ======================== PREMIUM WORKSTATION BADGE ARCHITECTURE (REALISTIC PREMIUM 3D ENGINE) */
+        /* ====== APP LOGO (NEO BRUT BADGE) ====== */
         @keyframes floatingObject {
             0% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-4px) rotate(2deg); }
             100% { transform: translateY(0px) rotate(0deg); }
         }
 
+        .app-premium-3d-logo {
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            border: var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-brutal-xs);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s var(--pixel-ease), box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .app-premium-3d-logo:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #171717;
+        }
+        .app-premium-3d-logo::before { display: none; }
+        .app-premium-3d-logo .core-sphere {
+            width: 22px; height: 22px;
+            background: #171717;
+            border-radius: 50%;
+            border: 2px solid #171717;
+            animation: floatingObject 3s ease-in-out infinite;
+            position: relative; z-index: 3;
+        }
+        .app-premium-3d-logo .torus-ring {
+            position: absolute;
+            width: 34px; height: 12px;
+            border: 3px solid #171717;
+            border-radius: 50%;
+            transform: rotate(-25deg);
+            z-index: 4;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* ====== PREMIUM FINTECH BADGE ====== */
         .premium-fintech-badge {
             width: 52px;
             height: 52px;
-            border-radius: 18px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            background: linear-gradient(135deg, #ffffff 0%, rgba(241, 234, 255, 0.6) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 
-                inset 0 -4px 8px rgba(255, 192, 217, 0.2),
-                inset 0 4px 8px rgba(255, 255, 255, 0.9),
-                0 10px 20px -5px var(--badge-glow-color, rgba(169, 236, 255, 0.3)),
-                0 4px 6px -2px rgba(201, 167, 255, 0.15);
+            background: #ccff00;
+            border: 2.5px solid #171717;
+            box-shadow: 4px 4px 0px #171717;
             overflow: hidden;
-            transition: transform 0.4s var(--pixel-ease), box-shadow 0.4s var(--pixel-ease);
-            transform-style: preserve-3d;
-            perspective: 500px;
+            transition: transform 0.2s var(--pixel-ease), box-shadow 0.2s;
+        }
+        .premium-fintech-badge::before { display: none; }
+        .premium-fintech-badge::after { display: none; }
+        .premium-fintech-badge:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #171717;
         }
 
-        /* Pure CSS Claymorphism 3D Asset Wrapper Slot */
-        .premium-fintech-badge .clay-3d-renderer {
+        .clay-3d-renderer {
             position: relative;
             width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: floatingObject 4s ease-in-out infinite;
             z-index: 3;
             pointer-events: none;
         }
 
-        /* 3D Macro Object Implementation Structure */
-        .clay-3d-object {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
+        /* Clay objects now use font icons in white */
+        .clay-3d-object { 
+            position: relative; display: flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; color: white; font-size: 14px;
         }
-
-        /* Core 3D Elements Design System Generator - Glossy Pastel Material Customizations */
-        .clay-3d-wallet {
-            width: 24px; height: 18px; background: var(--badge-icon-color, var(--pastel-purple)); border-radius: 6px;
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.08), inset 2px 2px 5px rgba(255,255,255,0.6), 0 4px 8px rgba(255,192,217,0.3);
+        .clay-3d-wallet, .clay-3d-card, .clay-3d-bank, .clay-3d-cash,
+        .clay-3d-utensils, .clay-3d-bus, .clay-3d-bolt, .clay-3d-gamepad {
+            width: 20px; height: 20px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.8);
         }
-        .clay-3d-wallet::after {
-            content: ''; position: absolute; right: 0; top: 4px; width: 8px; height: 10px; background: inherit; border-radius: 3px;
-            box-shadow: inset -1px -1px 2px rgba(0,0,0,0.05), 0 2px 3px rgba(0,0,0,0.05); filter: brightness(0.95);
-        }
-
-        .clay-3d-card {
-            width: 24px; height: 16px; background: var(--badge-icon-color, var(--pastel-blue)); border-radius: 4px; transform: rotate(-10deg);
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.08), inset 2px 2px 5px rgba(255,255,255,0.6), 0 5px 10px rgba(169, 236, 255, 0.3);
-        }
-        .clay-3d-card::after {
-            content: ''; position: absolute; left: 3px; top: 3px; width: 5px; height: 4px; background: #FFF9E6; border-radius: 1px; box-shadow: inset 1px 1px 1px rgba(0,0,0,0.05);
-        }
-
-        .clay-3d-bank {
-            width: 22px; height: 14px; background: var(--badge-icon-color, #B9C6FF); border-radius: 3px; position: relative; margin-top: 6px;
-            box-shadow: inset -2px -1px 4px rgba(0,0,0,0.08), inset 2px 2px 4px rgba(255,255,255,0.6), 0 4px 8px rgba(184,168,255,0.25);
-        }
-        .clay-3d-bank::before {
-            content: ''; position: absolute; top: -6px; left: 0; width: 22px; height: 6px; background: inherit; 
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%); filter: brightness(1.05);
-        }
-
-        .clay-3d-cash {
-            width: 24px; height: 14px; background: var(--badge-icon-color, var(--pastel-green)); border-radius: 3px; position: relative;
-            box-shadow: inset -2px -1px 4px rgba(0,0,0,0.06), inset 2px 2px 4px rgba(255,255,255,0.6), 0 4px 8px rgba(202,255,223,0.3);
-        }
-        .clay-3d-cash::after {
-            content: ''; position: absolute; inset: 2px; border: 1px solid rgba(255,255,255,0.5); border-radius: 2px;
-        }
-
-        .clay-3d-utensils {
-            width: 14px; height: 14px; background: var(--badge-icon-color, var(--pastel-orange)); border-radius: 50%; position: relative;
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.08), inset 2px 2px 5px rgba(255,255,255,0.6), 0 4px 8px rgba(255,229,204,0.3);
-        }
-        .clay-3d-utensils::before {
-            content: '🍱'; position: absolute; font-size: 13px; top: -3px; left: -1px;
-        }
-
-        .clay-3d-bus {
-            width: 18px; height: 20px; background: var(--badge-icon-color, var(--pastel-blue)); border-radius: 6px 6px 4px 4px; position: relative;
-            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.08), inset 2px 2px 4px rgba(255,255,255,0.6), 0 4px 8px rgba(169,236,255,0.25);
-        }
-        .clay-3d-bus::after {
-            content: ''; position: absolute; left: 3px; top: 3px; width: 12px; height: 6px; background: #6C6382; border-radius: 2px; opacity: 0.2;
-        }
-
-        .clay-3d-bolt {
-            width: 10px; height: 22px; background: var(--badge-icon-color, #FFEFA6); transform: skewX(-15deg); position: relative;
-            box-shadow: 0 4px 10px rgba(255, 239, 166, 0.6); border-radius: 2px;
-        }
-
-        .clay-3d-gamepad {
-            width: 24px; height: 16px; background: var(--badge-icon-color, var(--pastel-purple)); border-radius: 8px; position: relative;
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.08), inset 2px 2px 5px rgba(255,255,255,0.6), 0 4px 8px rgba(194,176,255,0.3);
-        }
-
-        .clay-3d-sparkles {
-            font-size: 18px; text-shadow: 0 2px 8px rgba(255, 192, 217, 0.9); filter: drop-shadow(0 2px 4px rgba(169,236,255,0.2));
-        }
-
+        .clay-3d-wallet::after, .clay-3d-card::after, .clay-3d-bank::before,
+        .clay-3d-cash::after { display: none; }
+        .clay-3d-utensils::before { display: none; }
+        .clay-3d-sparkles { font-size: 18px; }
         .clay-3d-income {
-            width: 18px; height: 18px; background: #9CE7BA; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.08), inset 2px 2px 4px rgba(255,255,255,0.6), 0 4px 6px rgba(156,231,186,0.3);
+            width: 18px; height: 18px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
             color: white; font-weight: 800; font-size: 11px;
-        }
-
-        /* High Gloss Translucent Specular Shimmer Edge Overlay */
-        .premium-fintech-badge::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 100%);
-            border-radius: 17px 17px 4px 4px;
-            z-index: 4;
-            pointer-events: none;
-        }
-
-        /* Deep Specular Inner Rim Light Effect */
-        .premium-fintech-badge::after {
-            content: '';
-            position: absolute;
-            inset: 1px;
-            border-radius: 17px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .premium-fintech-badge:hover {
-            transform: translateY(-5px) rotateX(10deg) rotateY(5deg);
-            box-shadow: 
-                inset 0 -4px 8px rgba(0, 0, 0, 0.02),
-                inset 0 4px 8px rgba(255, 255, 255, 0.9),
-                0 18px 30px -4px var(--badge-glow-color, rgba(255, 192, 217, 0.45));
-        }
-
-        .premium-fintech-badge:hover .clay-3d-renderer {
-            transform: scale(1.15) translateZ(15px);
-        }
-
-        /* 3D App Branding Identity Logo Structure */
-        .app-premium-3d-logo {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #ffffff 0%, #EBF9FF 100%);
-            border-radius: 18px;
-            box-shadow: 
-                inset 0 -4px 10px rgba(255, 192, 217, 0.2),
-                inset 0 4px 10px rgba(255, 255, 255, 0.9),
-                0 12px 25px rgba(169, 236, 255, 0.4);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,0.9);
-            transform-style: preserve-3d;
-            perspective: 400px;
-            transition: transform 0.4s var(--pixel-ease);
-        }
-        .app-premium-3d-logo:hover {
-            transform: scale(1.05) rotate(5deg);
-        }
-        .app-premium-3d-logo::before {
-            content: ''; position: absolute; inset: 1px; border-radius: 17px; border: 1.5px solid rgba(255,255,255,0.7); z-index: 2;
-        }
-        .app-premium-3d-logo .core-sphere {
-            width: 24px; height: 24px; background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-purple) 100%); border-radius: 50%;
-            box-shadow: inset -3px -3px 8px rgba(0,0,0,0.06), inset 3px 3px 8px rgba(255,255,255,0.6), 0 8px 15px rgba(194, 176, 255, 0.4);
-            animation: floatingObject 3s ease-in-out infinite; position: relative; z-index: 3;
-        }
-        .app-premium-3d-logo .torus-ring {
-            position: absolute; width: 34px; height: 12px; border: 4px solid var(--pastel-pink); border-radius: 50%;
-            transform: rotate(-25deg); z-index: 4; box-shadow: 0 4px 6px rgba(255,192,217,0.2); pointer-events: none;
+            border: 2px solid rgba(255,255,255,0.8);
         }
 
         .avatar-wrap {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, var(--pastel-pink) 0%, var(--pastel-purple) 100%);
-            padding: 1px;
-            box-shadow: 0 10px 20px rgba(255, 192, 217, 0.3);
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            background: var(--primary);
+            border: var(--border);
+            box-shadow: var(--shadow-brutal-xs);
         }
-
         .avatar-real {
-            width: 100%;
-            height: 100%;
-            border-radius: 17px;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%; height: 100%;
+            border-radius: 14px;
+            background: transparent;
+            display: flex; align-items: center; justify-content: center;
             font-size: 20px;
-            backdrop-filter: blur(5px);
         }
 
-        .balance-card { background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(244,249,255,0.6) 100%); }
+        /* ====== BALANCE CARD ====== */
+        .balance-card {
+            background: var(--primary) !important;
+            color: white;
+        }
+        /* balance-card text colors handled by view-color-text system below */
 
         .editable-balance {
             cursor: pointer;
@@ -353,81 +256,70 @@
             gap: 8px;
             transition: opacity 0.2s;
         }
-        .editable-balance:hover { opacity: 0.8; }
-        .editable-balance i { font-size: 16px; color: var(--pastel-purple); }
+        .editable-balance:hover { opacity: 0.85; }
+        .editable-balance i { font-size: 16px; color: rgba(23,23,23,0.6); }
 
         .balance-title {
-            font-size: 13px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-sub);
+            letter-spacing: 2px;
             font-weight: 700;
+            margin-bottom: 6px;
         }
-
         .balance-amount {
             font-size: 34px;
             font-weight: 800;
-            margin: 8px 0;
-            color: var(--text-main);
             letter-spacing: -1px;
+            margin-bottom: 20px;
         }
-
         .balance-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 20px;
-            border-top: 1px solid rgba(158, 148, 178, 0.15);
-            padding-top: 16px;
+            gap: 12px;
         }
+        .flow-stat {
+            background: rgba(0,0,0,0.08);
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .flow-stat h4 { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px; }
+        .flow-income { font-size: 16px; font-weight: 800; margin-top: 4px; }
+        .flow-expense { font-size: 16px; font-weight: 800; margin-top: 4px; }
 
-        .flow-stat h4 { font-size: 12px; color: var(--text-sub); font-weight: 600; }
-        .flow-stat p { font-size: 16px; font-weight: 700; margin-top: 4px; }
-        .flow-income { color: #78D6A0; }
-        .flow-expense { color: #FFA1B8; }
-
+        /* ====== WALLET CAROUSEL ====== */
         .dash-wallet-carousel {
             display: flex;
-            gap: 16px;
+            gap: 14px;
             overflow-x: auto;
-            padding: 8px 8px 24px 8px;
-            margin: 0 -8px;
-            scroll-snap-type: x mandatory;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
             scrollbar-width: none;
         }
-        .dash-wallet-carousel::-webkit-scrollbar {
-            display: none;
-        }
-        
+        .dash-wallet-carousel::-webkit-scrollbar { display: none; }
+
         .dash-wallet-card {
-            flex: 0 0 175px;
-            scroll-snap-align: start;
-            background: linear-gradient(135deg, #ffffff 0%, #FAF9FE 100%);
-            border-radius: 26px;
-            padding: 18px;
-            box-shadow: 0 12px 24px rgba(169, 236, 255, 0.1), 0 20px 35px -10px var(--wallet-shadow, rgba(255,192,217,0.25));
-            border: 1px solid rgba(255,255,255,0.9);
+            min-width: 150px;
+            height: 140px;
+            background: var(--white);
+            border: var(--border);
+            border-radius: var(--radius-large);
+            padding: 16px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-brutal-sm);
             position: relative;
             overflow: hidden;
-            transition: transform 0.4s var(--pixel-ease), box-shadow 0.4s var(--pixel-ease);
+            transition: transform 0.15s var(--pixel-ease), box-shadow 0.15s;
             cursor: pointer;
         }
         .dash-wallet-card:hover {
-            transform: translateY(-4px) scale(1.02);
+            transform: translate(-3px, -3px);
+            box-shadow: 8px 8px 0px #171717;
         }
-        .dash-wallet-card:active {
-            transform: scale(0.95);
-        }
-        .dash-wallet-glow {
-            position: absolute;
-            top: -40%; right: -40%;
-            width: 140px; height: 140px;
-            border-radius: 50%;
-            filter: blur(30px);
-            opacity: 0.35;
-            z-index: 1;
-            background: var(--wallet-color, var(--pastel-purple));
-        }
+        .dash-wallet-card:active { transform: scale(0.95); box-shadow: 2px 2px 0px #171717; }
+
+        .dash-wallet-glow { display: none; }
+
         .dash-wallet-content {
             position: relative;
             z-index: 2;
@@ -439,22 +331,23 @@
         .dash-wallet-top {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         .dash-wallet-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
-            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .dash-wallet-amt {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: var(--text-main);
             letter-spacing: -0.5px;
@@ -462,45 +355,43 @@
         .dash-wallet-progress {
             width: 100%;
             height: 6px;
-            background: rgba(158, 148, 178, 0.1);
-            border-radius: 10px;
-            margin-top: 12px;
+            background: rgba(23,23,23,0.1);
+            border-radius: 3px;
+            border: 1.5px solid #171717;
+            margin-top: 10px;
             overflow: hidden;
-            border: 0.5px solid rgba(255,255,255,0.6);
         }
         .dash-wallet-bar {
             height: 100%;
-            border-radius: 10px;
+            border-radius: 2px;
             width: 0;
             transition: width 1s var(--pixel-ease);
-            background: var(--wallet-color, var(--pastel-purple));
-            box-shadow: 0 0 8px var(--wallet-color, var(--pastel-purple));
+            background: var(--wallet-color, var(--primary));
         }
 
+        /* ====== CAPSULE TAGS ====== */
         .premium-capsule-tag {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
+            gap: 4px;
+            padding: 3px 9px;
             border-radius: 100px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            background: var(--tag-bg, rgba(194, 176, 255, 0.15));
-            color: var(--tag-color, var(--text-main));
-            border: 1px solid var(--tag-border, rgba(255,255,255,0.7));
-            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
-            transition: all 0.3s ease;
+            background: var(--primary);
+            color: white;
+            border: 1.5px solid #171717;
+            box-shadow: 2px 2px 0px #171717;
+            transition: all 0.2s ease;
         }
-        .premium-capsule-tag:hover {
-            transform: scale(1.04);
-            background: var(--tag-bg-hover, rgba(194, 176, 255, 0.25));
-        }
+        .premium-capsule-tag:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0px #171717; }
 
+        /* ====== TEXTAREA ====== */
         .textarea-pastel {
             width: 100%;
             height: 90px;
-            background: rgba(244, 246, 252, 0.8);
-            border: 2px solid transparent;
+            background: #fff;
+            border: var(--border);
             border-radius: var(--radius-medium);
             padding: 14px;
             font-size: 14px;
@@ -510,60 +401,67 @@
             resize: none;
             transition: var(--transition-smooth);
             margin-bottom: 16px;
+            font-family: 'Space Grotesk', sans-serif;
         }
-        .textarea-pastel:focus { border-color: var(--pastel-purple); background: var(--card-bg-pure); }
+        .textarea-pastel:focus { border-color: var(--primary); box-shadow: 4px 4px 0px var(--primary); }
 
+        /* ====== FAB BUTTONS ====== */
         .fab-group {
             position: fixed;
             bottom: 105px;
             right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             z-index: 850;
         }
 
-        /* 3D Glassmorphism Styled Action Floating Triggers - Deep Cyan & Pink Shimmer */
         .fab-btn {
             width: 54px;
             height: 54px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 16px;
+            border: var(--border);
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 12px 28px rgba(255, 192, 217, 0.3);
-            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-brutal-sm);
+            transition: transform 0.15s var(--pixel-ease), box-shadow 0.15s;
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
-            perspective: 300px;
         }
-        .fab-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 50%;
-            background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0));
-            z-index: 2;
-        }
-        .fab-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-        .fab-btn:active { transform: scale(0.88) translateY(2px); }
-        .fab-quick { background: linear-gradient(135deg, #B2D6FF 0%, #90A0FF 100%); box-shadow: 0 12px 24px rgba(144, 160, 255, 0.35); }
-        .fab-income { background: linear-gradient(135deg, #A8F5D0 0%, #73D39C 100%); box-shadow: 0 12px 24px rgba(115, 211, 156, 0.35); }
-        .fab-expense { background: linear-gradient(135deg, #FFC5DB 0%, #FFA1B8 100%); box-shadow: 0 12px 24px rgba(255, 161, 184, 0.35); }
+        .fab-btn::before { display: none; }
+        .fab-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px #171717; }
+        .fab-btn:active { transform: scale(0.88) translateY(2px); box-shadow: 1px 1px 0px #171717; }
 
+        .fab-quick { background: var(--view-color, #ccff00); color: var(--view-color-text, #171717); }
+        .fab-income { background: #22C55E; }
+        .fab-expense { background: #EF4444; }
+        .fab-emoji {
+            font-size: 22px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fab-expense .fab-emoji {
+            font-size: 28px;
+            font-weight: 900;
+            font-style: normal;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* ====== BUDGET / WALLET ITEM CARDS ====== */
         .budget-item-card {
-            background: var(--card-bg-pure);
+            background: var(--white);
+            border: var(--border);
             border-radius: var(--radius-large);
             padding: 20px;
             margin-bottom: 14px;
-            box-shadow: 0 12px 28px rgba(169, 236, 255, 0.1), 0 16px 25px -10px var(--card-shadow, rgba(255,192,217,0.15));
-            border: 1px solid rgba(255,255,255,0.95);
+            box-shadow: var(--shadow-brutal-sm);
             max-height: 150px;
             opacity: 0;
             transform: translateY(15px) scale(0.95);
@@ -571,7 +469,6 @@
             overflow: hidden;
             will-change: transform, opacity;
         }
-
         .item-enter-active { opacity: 1 !important; transform: translateY(0) scale(1) !important; }
         .item-leave-active {
             opacity: 0 !important;
@@ -588,58 +485,61 @@
         .budget-card-actions { display: flex; gap: 8px; }
 
         .budget-action-icon-btn {
-            background: rgba(158, 148, 178, 0.06);
-            border: none;
+            background: #F8F8F8;
+            border: 2px solid #171717;
             width: 34px;
             height: 34px;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             color: var(--text-main);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.7);
+            transition: all 0.15s ease;
+            box-shadow: 3px 3px 0px #171717;
         }
-        .budget-action-icon-btn:active { transform: scale(0.85); background: rgba(158, 148, 178, 0.15); }
-        .budget-action-icon-btn.delete-trigger { color: #FFA1B8; background: rgba(255, 161, 184, 0.08); border-color: rgba(255,161,184,0.2); }
-        .budget-action-icon-btn.delete-trigger:active { background: rgba(255, 161, 184, 0.18); }
+        .budget-action-icon-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #171717; background: #E5E5E5; }
+        .budget-action-icon-btn.delete-trigger { color: var(--red); background: #FEF2F2; border-color: var(--red); box-shadow: 3px 3px 0px var(--red); }
+        .budget-action-icon-btn.delete-trigger:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px var(--red); }
 
-        .section-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 4px; }
-        .section-title { font-size: 16px; font-weight: 800; }
+        /* ====== SECTION TITLE ====== */
+        .section-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 2px; }
+        .section-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* ====== TRANSACTION LIST ITEMS ====== */
         .list-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(5px);
+            background: #FAFAFA;
+            border: 2px solid #171717;
             padding: 14px 16px;
-            border-radius: var(--radius-medium);
-            border: 1px solid rgba(255,255,255,0.7);
-            margin-bottom: 12px;
+            border-radius: 14px;
+            margin-bottom: 10px;
             max-height: 85px;
             opacity: 0;
             transform: translateY(10px);
             transition: transform 0.5s var(--pixel-ease), opacity 0.5s var(--pixel-ease), max-height 0.5s var(--pixel-ease), padding 0.5s var(--pixel-ease), margin 0.5s var(--pixel-ease);
             will-change: transform, opacity;
+            box-shadow: 3px 3px 0px #171717;
         }
+        .list-item:hover { transform: translate(-2px, -2px) !important; box-shadow: 5px 5px 0px #171717; }
 
         .item-left { display: flex; align-items: center; gap: 14px; width: 68%; }
         .item-info { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
         .item-info h5 { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
         .item-info p { font-size: 11px; color: var(--text-sub); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
-        
         .item-right-side { display: flex; align-items: center; gap: 8px; text-align: right; }
         .item-amount { font-size: 14px; font-weight: 800; white-space: nowrap; }
 
+        /* ====== FORMS ====== */
         .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; padding-left: 4px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); margin-bottom: 6px; padding-left: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .input-pastel, .select-pastel {
             width: 100%;
-            background: rgba(244, 246, 252, 0.8);
-            border: 2px solid transparent;
+            background: #FFFFFF;
+            border: var(--border);
             border-radius: var(--radius-medium);
             padding: 14px 16px;
             font-size: 14px;
@@ -647,75 +547,88 @@
             color: var(--text-main);
             outline: none;
             transition: var(--transition-smooth);
+            font-family: 'Space Grotesk', sans-serif;
+            box-shadow: 3px 3px 0px #171717;
         }
-        .input-pastel:focus, .select-pastel:focus { border-color: var(--pastel-purple); background: var(--card-bg-pure); }
+        .input-pastel:focus, .select-pastel:focus {
+            border-color: var(--primary);
+            box-shadow: 4px 4px 0px var(--primary);
+        }
 
-        .color-palette-grid, .icon-palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px; }
-        
-        .color-dot-option { 
-            height: 44px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            border: 2px solid transparent; 
-            transition: var(--transition-smooth); 
+        /* ====== COLOR & ICON PALETTES ====== */
+        .color-palette-grid, .icon-palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+
+        .color-dot-option {
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2.5px solid transparent;
+            transition: var(--transition-smooth);
             position: relative;
-            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05), 0 4px 10px rgba(0,0,0,0.03);
         }
-        .color-dot-option::before {
-            content: ''; position: absolute; inset: 0; border-radius:12px; background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0));
-        }
-        .color-dot-option.active { border-color: var(--text-main); transform: scale(1.08) translateY(-2px); box-shadow: 0 8px 16px rgba(255,192,217,0.3); }
+        .color-dot-option::before { display: none; }
+        .color-dot-option.active { border-color: #171717; transform: scale(1.08) translateY(-2px); box-shadow: 3px 3px 0px #171717; }
 
         .icon-box-option {
             height: 46px;
-            background: #ffffff;
-            border-radius: 14px;
+            background: #F8F8F8;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             color: var(--text-main);
             cursor: pointer;
-            border: 1px solid rgba(158, 148, 178, 0.15);
+            border: 2.5px solid #171717;
             transition: var(--transition-smooth);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+            box-shadow: 3px 3px 0px #171717;
         }
-        .icon-box-option.active { background: var(--text-main); color: white !important; transform: scale(1.08) translateY(-2px); box-shadow: 0 8px 16px rgba(194,176,255,0.25); border-color: var(--text-main); }
+        .icon-box-option:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #171717; }
+        .icon-box-option.active { background: var(--primary); color: #171717 !important; border-color: #171717; box-shadow: 3px 3px 0px #171717; }
 
+        /* ====== BUTTONS ====== */
         .btn-pastel-primary {
             width: 100%;
-            background: linear-gradient(135deg, var(--pastel-purple) 0%, #AF9BFF 100%);
-            border: none;
-            color: white;
+            background: var(--primary);
+            border: var(--border);
+            color: #171717;
             padding: 16px;
             border-radius: var(--radius-medium);
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(194, 176, 255, 0.35);
-            transition: transform 0.2s ease;
+            box-shadow: var(--shadow-brutal-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .btn-pastel-primary:active { transform: scale(0.97); }
+        .btn-pastel-primary:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0px #171717; }
+        .btn-pastel-primary:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #171717; }
 
         .btn-pastel-secondary {
             width: 100%;
-            background: #F5F4FA;
+            background: #F8F8F8;
             color: var(--text-main);
-            border: none;
+            border: var(--border);
             padding: 14px;
             border-radius: var(--radius-medium);
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
-            transition: transform 0.2s ease;
+            transition: transform 0.15s ease, box-shadow 0.15s;
+            box-shadow: var(--shadow-brutal-xs);
+            font-family: 'Space Grotesk', sans-serif;
         }
-        .btn-pastel-secondary:active { transform: scale(0.97); }
+        .btn-pastel-secondary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #171717; }
+        .btn-pastel-secondary:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #171717; }
 
+        /* ====== MODALS ====== */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(50, 45, 65, 0);
+            background: rgba(23, 23, 23, 0);
             backdrop-filter: blur(0px);
             -webkit-backdrop-filter: blur(0px);
             z-index: 999;
@@ -726,27 +639,37 @@
             transition: background-color 0.25s var(--pixel-ease), backdrop-filter 0.25s var(--pixel-ease);
             will-change: background-color, backdrop-filter;
         }
-        .modal-overlay.active { background: rgba(50, 45, 65, 0.25); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); pointer-events: auto; }
+        .modal-overlay.active {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            pointer-events: auto;
+        }
 
         .modal-sheet {
             width: 100%;
             max-width: 430px;
-            background: rgba(255, 255, 255, 0.97);
-            border-top-left-radius: var(--radius-large);
-            border-top-right-radius: var(--radius-large);
+            background: #FFFFFF;
+            border: 3px solid #171717;
+            border-bottom: none;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
             padding: 30px 24px 40px 24px;
             transform: translateY(100%);
             transition: transform 0.25s var(--pixel-ease);
             max-height: 85vh;
             overflow-y: auto;
             will-change: transform;
+            box-shadow: 0 -6px 0px #171717;
         }
         .modal-overlay.active .modal-sheet { transform: translateY(0); }
 
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+        .modal-header h3 { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+
         .close-modal-btn {
-            background: rgba(158, 148, 178, 0.1);
-            border: none;
+            background: #F8F8F8;
+            border: 2.5px solid #171717;
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -754,10 +677,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.15s;
+            box-shadow: 3px 3px 0px #171717;
+            color: var(--text-main);
         }
-        .close-modal-btn:active { transform: scale(0.85); }
+        .close-modal-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #171717; }
 
+        /* ====== BOTTOM NAV ====== */
         .bottom-nav {
             position: fixed;
             bottom: 20px;
@@ -765,15 +691,13 @@
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 390px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.6);
+            background: #FFFFFF;
+            border: 3px solid #171717;
             border-radius: 24px;
             display: flex;
             justify-content: space-around;
-            padding: 10px;
-            box-shadow: 0 15px 35px rgba(255, 192, 217, 0.2);
+            padding: 8px 4px;
+            box-shadow: 6px 6px 0px #171717;
             z-index: 900;
         }
 
@@ -781,36 +705,58 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            color: var(--text-sub);
-            font-size: 11px;
+            gap: 3px;
+            color: #888888;
+            font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             width: 50px;
             transition: color 0.2s var(--pixel-ease);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .nav-icon {
+            font-size: 18px;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s var(--pixel-ease), background-color 0.3s, box-shadow 0.2s, border 0.2s;
+            background: transparent;
+            border: 2px solid transparent;
         }
         .nav-item i {
-            font-size: 18px;
+            font-size: 16px;
             width: 36px;
             height: 36px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.25s var(--pixel-ease), background-color 0.2s, color 0.2s;
+            transition: transform 0.25s var(--pixel-ease), background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
         }
-        .nav-item.active { color: var(--text-main); }
+        .nav-item.active { color: var(--black); }
+        .nav-item.active .nav-icon {
+            background: var(--view-color, #ccff00);
+            transform: translateY(-4px) scale(1.1);
+            border: 2.5px solid #171717;
+            box-shadow: 3px 3px 0px #171717;
+        }
         .nav-item.active i {
-            background: var(--pastel-purple);
-            color: white;
+            background: var(--primary);
+            color: #171717;
             transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 8px 15px rgba(194, 176, 255, 0.4);
+            border: 2.5px solid #171717;
+            box-shadow: 3px 3px 0px #171717;
         }
 
+        /* ====== CONFIRM DIALOGS ====== */
         .confirm-dialog-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(50, 45, 65, 0);
+            background: rgba(23, 23, 23, 0);
             backdrop-filter: blur(0px);
             z-index: 1000;
             display: flex;
@@ -819,49 +765,273 @@
             pointer-events: none;
             transition: background-color 0.2s ease, backdrop-filter 0.2s ease;
         }
-        .confirm-dialog-overlay.active { background: rgba(50, 45, 65, 0.15); backdrop-filter: blur(8px); pointer-events: auto; }
-        
+        .confirm-dialog-overlay.active { background: rgba(23, 23, 23, 0.5); backdrop-filter: blur(4px); pointer-events: auto; }
+
         .confirm-box {
-            background: rgba(255, 255, 255, 0.95);
+            background: #FFFFFF;
             width: 80%;
             max-width: 290px;
+            border: var(--border);
             border-radius: 20px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
             transform: scale(1.1);
             opacity: 0;
             transition: transform 0.2s var(--pixel-ease), opacity 0.2s ease;
-            box-shadow: 0 15px 35px rgba(169,236,255,0.15);
+            box-shadow: 8px 8px 0px #171717;
         }
         .confirm-dialog-overlay.active .confirm-box { transform: scale(1); opacity: 1; }
         .confirm-buttons { display: flex; gap: 10px; margin-top: 18px; }
-        .confirm-btn { flex: 1; padding: 12px; border: none; font-size: 13px; font-weight: 700; border-radius: 12px; cursor: pointer; }
-        .confirm-btn.cancel { background: #F5F4FA; color: var(--text-sub); }
-        .confirm-btn.danger { background: #FFA1B8; color: white; }
+        .confirm-btn {
+            flex: 1; padding: 12px;
+            border: 2.5px solid #171717;
+            font-size: 13px; font-weight: 800;
+            border-radius: 12px; cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 3px 3px 0px #171717;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .confirm-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0px #171717; }
+        .confirm-btn.cancel { background: #F8F8F8; color: var(--text-main); }
+        .confirm-btn.danger { background: var(--red); color: white; border-color: #171717; }
 
-        .insight-badge { background: rgba(194, 176, 255, 0.12); border-left: 4px solid var(--pastel-purple); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; margin-top: 10px; }
+        /* ====== INSIGHT BADGE ====== */
+        .insight-badge {
+            background: #F5F0FF;
+            border: 2.5px solid var(--primary);
+            border-left: 5px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 12px;
+            color: var(--text-main);
+        }
 
-        .chart-container-with-center { position: relative; height: 240px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        .chart-center-metrics { position: absolute; text-align: center; pointer-events: none; display: flex; flex-direction: column; justify-content: center; }
-        .chart-center-metrics .c-label { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px;}
-        .chart-center-metrics .c-val { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px;}
+        /* ====== CHARTS ====== */
+        .chart-container-with-center {
+            position: relative; height: 240px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .chart-center-metrics {
+            position: absolute; text-align: center; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .chart-center-metrics .c-label { font-size: 10px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
+        .chart-center-metrics .c-val { font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px; }
 
+        /* ====== BUDGET MEMO CARD ====== */
         .memo-budget-card {
-            background: #ffffff;
+            background: #FFFFFF;
+            border: var(--border);
             border-radius: var(--radius-medium);
+            border-left: 6px solid var(--primary);
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 8px 20px rgba(169,236,255,0.08);
-            border-left: 5px solid var(--pastel-purple);
+            box-shadow: var(--shadow-brutal-xs);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .memo-budget-card:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-brutal-sm); }
+
+        /* ====== ANALYTICS SECTION ====== */
+        .analytics-stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .analytics-stat-box {
+            background: #F8F8F8;
+            border: 2.5px solid #171717;
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 3px 3px 0px #171717;
         }
 
+        /* ====== SETTINGS CATEGORY LIST ====== */
+        #settings-category-list-container > div {
+            background: #F8F8F8 !important;
+            border: 2px solid #171717 !important;
+            border-radius: 12px !important;
+            margin-bottom: 8px !important;
+        }
+
+        /* ====== SCROLLBAR ====== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C4C4C4; border-radius: 3px; }
+
         .hidden { display: none !important; }
+
+        /* Balance card text color adapts to view */
+        .balance-card .balance-title { color: var(--view-color-text) !important; opacity: 0.7; }
+        .balance-card .balance-amount { color: var(--view-color-text) !important; }
+        .balance-card .editable-balance { color: var(--view-color-text) !important; }
+        .balance-card .editable-balance i { color: var(--view-color-text) !important; opacity: 0.6; }
+        .balance-card .flow-stat h4 { color: var(--view-color-text) !important; opacity: 0.65; }
+        .balance-card .flow-income { color: var(--view-color-text) !important; }
+        .balance-card .flow-expense { color: var(--view-color-text) !important; }
+        .balance-card .flow-stat { 
+            background: rgba(0,0,0,0.08) !important; 
+            border-color: rgba(0,0,0,0.2) !important; 
+        }
+
+        /* Nav item icon styles per view - using .nav-icon now */
+        #nav-home.active .nav-icon     { background: #ccff00 !important; }
+        #nav-analytics.active .nav-icon{ background: #FF4D6D !important; }
+        #nav-wallet.active .nav-icon   { background: #00CFFF !important; }
+        #nav-budget.active .nav-icon   { background: #FF9500 !important; }
+        #nav-history.active .nav-icon  { background: #BF5AF2 !important; }
+        #nav-settings.active .nav-icon { background: #30D158 !important; }
+
+        /* Smooth color transition on balance card */
+        .balance-card, .balance-card * {
+            transition: background 0.35s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+
+        /* ====== NEO BRUT EXTRA POLISH ====== */
+
+        /* Wallet carousel badge sizing fix */
+        .dash-wallet-card .premium-fintech-badge {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 12px !important;
+            min-width: 40px;
+        }
+
+        /* Analytics sub-stat boxes */
+        #view-analytics .floating-card > div:not(.chart-container-with-center):not(.insight-badge) > div {
+            padding: 10px;
+            background: #F8F8F8;
+            border: 2px solid #171717;
+            border-radius: 12px;
+            box-shadow: 3px 3px 0px #171717;
+        }
+
+        /* History floating card subtle */
+        #view-history .floating-card {
+            background: #FFFFFF;
+        }
+
+        /* Section "Manage" / "See All" link neo style */
+        .section-title-container a {
+            font-size: 12px;
+            color: #99cc00 !important;
+            text-decoration: none !important;
+            font-weight: 800 !important;
+            border: 2px solid #99cc00;
+            border-radius: 8px;
+            padding: 3px 10px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .section-title-container a:hover {
+            background: #99cc00;
+            color: white !important;
+        }
+
+        /* Animate pulse on balance card */
+        @keyframes brutPulse {
+            0% { box-shadow: 8px 8px 0px #171717; }
+            50% { box-shadow: 10px 10px 0px rgba(0,0,0,0.3); }
+            100% { box-shadow: 8px 8px 0px #171717; }
+        }
+        .balance-card {
+            animation: brutPulse 4s ease-in-out infinite;
+        }
+        .balance-card:hover { animation: none; transform: translate(-3px,-3px); box-shadow: 11px 11px 0px #171717; }
+
+        /* FAB label tooltips via title => no change needed */
+
+        /* Loading/empty state text */
+        p[style*="color:var(--text-sub)"] { color: #888 !important; }
+
+        /* ====== PER-VIEW DYNAMIC COLOR SYSTEM ====== */
+        :root {
+            --view-color: #ccff00;
+            --view-color-text: #171717;
+        }
+
+        /* View color overrides - each tab has a unique vivid color */
+        body[data-view="home"]     { --view-color: #ccff00; --view-color-text: #171717; }
+        body[data-view="analytics"]{ --view-color: #FF4D6D; --view-color-text: #ffffff; }
+        body[data-view="wallet"]   { --view-color: #00CFFF; --view-color-text: #171717; }
+        body[data-view="budget"]   { --view-color: #FF9500; --view-color-text: #171717; }
+        body[data-view="history"]  { --view-color: #BF5AF2; --view-color-text: #ffffff; }
+        body[data-view="settings"] { --view-color: #30D158; --view-color-text: #171717; }
+
+        /* Apply view-color to balance card */
+        .balance-card {
+            background: var(--view-color) !important;
+            color: var(--view-color-text) !important;
+        }
+
+        /* Nav active uses view-color */
+        .nav-item.active i {
+            background: var(--view-color) !important;
+            color: var(--view-color-text) !important;
+        }
+        .nav-item.active {
+            color: var(--black) !important;
+        }
+
+        /* Buttons use view-color */
+        .btn-pastel-primary {
+            background: var(--view-color) !important;
+            color: var(--view-color-text) !important;
+        }
+
+        /* FAB quick uses view-color */
+        .fab-quick {
+            background: var(--view-color, #ccff00) !important;
+            color: var(--view-color-text, #171717) !important;
+        }
+
+        /* App logo uses view-color */
+        .app-premium-3d-logo {
+            background: var(--view-color) !important;
+        }
+
+        /* Insight badge border uses view-color */
+        .insight-badge {
+            border-color: var(--view-color) !important;
+            border-left-color: var(--view-color) !important;
+        }
+
+        /* Textarea focus */
+        .textarea-pastel:focus {
+            border-color: var(--view-color) !important;
+            box-shadow: 4px 4px 0px var(--view-color) !important;
+        }
+        .input-pastel:focus, .select-pastel:focus {
+            border-color: var(--view-color) !important;
+            box-shadow: 4px 4px 0px var(--view-color) !important;
+        }
+
+        /* Section title links */
+        .section-title-container a {
+            color: var(--view-color-text, #171717) !important;
+            background: var(--view-color) !important;
+            border-color: var(--view-color) !important;
+            border: 2px solid #171717 !important;
+        }
+        .section-title-container a:hover {
+            opacity: 0.85;
+        }
+
+        /* Brutalpulse uses view-color */
+        .balance-card {
+            transition: background 0.4s ease, box-shadow 0.15s;
+        }
+
+
     </style>
 </head>
-<body>
+<body data-view="home">
 
     <div class="app-container">
         
@@ -897,13 +1067,13 @@
 
             <div class="section-title-container" style="margin-top: 10px; margin-bottom: 8px;">
                 <h3 class="section-title">Active Wallets</h3>
-                <a href="#" onclick="switchView('wallet')" style="font-size:12px; color:var(--pastel-purple); text-decoration:none; font-weight:700;">Manage</a>
+                <a href="#" onclick="switchView('wallet')" style="font-size:12px; color:#99cc00; text-decoration:none; font-weight:700; border-bottom:2px solid #99cc00;">Manage</a>
             </div>
             <div class="dash-wallet-carousel" id="dashboard-wallets-carousel"></div>
 
             <div class="section-title-container" style="margin-top: 5px;">
                 <h3 class="section-title">Recent Logs</h3>
-                <a href="#" onclick="switchView('history')" style="font-size:12px; color:var(--pastel-purple); text-decoration:none; font-weight:700;">See All</a>
+                <a href="#" onclick="switchView('history')" style="font-size:12px; color:#99cc00; text-decoration:none; font-weight:700; border-bottom:2px solid #99cc00;">See All</a>
             </div>
             
             <div class="floating-card" style="padding: 16px;">
@@ -918,13 +1088,13 @@
                 </select>
             </div>
 
-            <div class="floating-card" style="background: linear-gradient(135deg, #FFF 0%, #FBFBFF(100%);">
+            <div class="floating-card">
                 <h4 style="font-size:14px; margin-bottom:12px; font-weight:800;">Core Analytics Engine</h4>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:12px;" class="analytics-stat-section">
                     <div><p style="color:var(--text-sub);">Wallets Asset Pool:</p><b id="an-allocated" style="font-size:15px;">¥0</b></div>
                     <div><p style="color:var(--text-sub);">Main Unallocated:</p><b id="an-remaining" style="font-size:15px;">¥0</b></div>
-                    <div><p style="color:var(--text-sub);">Period Expenses:</p><b id="an-expenses" style="font-size:15px; color:#FFA1B8;">¥0</b></div>
-                    <div><p style="color:var(--text-sub);">Top Spending:</p><b id="an-top-spending" style="font-size:14px; color:var(--pastel-purple);">-</b></div>
+                    <div><p style="color:var(--text-sub);">Period Expenses:</p><b id="an-expenses" style="font-size:15px; color:#EF4444; font-weight:800;">¥0</b></div>
+                    <div><p style="color:var(--text-sub);">Top Spending:</p><b id="an-top-spending" style="font-size:14px; color:#99cc00; font-weight:800;">-</b></div>
                 </div>
                 <div class="insight-badge" id="analytics-smart-insight-box">Generating metrics...</div>
             </div>
@@ -949,7 +1119,7 @@
         <main id="view-wallet" class="app-view">
             <div class="section-title-container" style="margin-bottom: 16px;">
                 <h3 class="section-title">Active Wallets Pool</h3>
-                <button class="input-pastel" style="width:auto; padding:8px 16px; font-size:12px; background: var(--card-bg-pure);" onclick="openWalletFormModal(null)">+ Create Wallet</button>
+                <button class="btn-pastel-primary" style="width:auto; padding:8px 16px; font-size:12px;" onclick="openWalletFormModal(null)">+ Create Wallet</button>
             </div>
             <div id="wallet-master-container"></div>
         </main>
@@ -957,7 +1127,7 @@
         <main id="view-budget" class="app-view">
             <div class="section-title-container" style="margin-bottom: 16px;">
                 <h3 class="section-title">Active Budget Period</h3>
-                <button class="input-pastel" style="width:auto; padding:8px 16px; font-size:12px; background: var(--card-bg-pure);" onclick="openBudgetMemoModal()">+ Buat Catatan</button>
+                <button class="btn-pastel-primary" style="width:auto; padding:8px 16px; font-size:12px;" onclick="openBudgetMemoModal()">+ Buat Catatan</button>
             </div>
             
             <div id="budget-memo-container"></div>
@@ -977,8 +1147,8 @@
             </div>
             <div class="floating-card" style="padding: 16px;">
                 <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 12px; padding: 0 4px;" id="history-period-summary">
-                    <span style="color:#73D39C;">Income: ¥0</span>
-                    <span style="color:#FFA1B8;">Expense: ¥0</span>
+                    <span style="color:#16A34A; font-weight:800;">Income: ¥0</span>
+                    <span style="color:#DC2626; font-weight:800;">Expense: ¥0</span>
                 </div>
                 <div id="history-master-list"></div>
             </div>
@@ -1004,33 +1174,51 @@
             </div>
 
             <div class="floating-card">
-                <h3 class="section-title" style="margin-bottom: 12px; font-size:14px; color:#FFA1B8;">Database Control Panel</h3>
-                <button class="btn-pastel-secondary" style="background:#EEF6FF; color:#4993F5;" onclick="backupDatabaseToJson()">
+                <h3 class="section-title" style="margin-bottom: 12px; font-size:14px; color:#EF4444;">Database Control Panel</h3>
+                <button class="btn-pastel-secondary" style="border-color:#3B82F6; box-shadow:3px 3px 0px #3B82F6; color:#3B82F6;" onclick="backupDatabaseToJson()">
                     <i class="fa-solid fa-file-export"></i> Backup Database (JSON)
                 </button>
-                <button class="btn-pastel-secondary" style="background:#EBFFF4; color:#12B57B;" onclick="triggerRestoreInputClick()">
+                <button class="btn-pastel-secondary" style="border-color:#22C55E; box-shadow:3px 3px 0px #22C55E; color:#22C55E;" onclick="triggerRestoreInputClick()">
                     <i class="fa-solid fa-file-import"></i> Restore Database
                 </button>
                 <input type="file" id="restore-file-input" style="display:none;" accept=".json" onchange="restoreDatabaseFromJson(event)">
-                <button class="btn-pastel-secondary" style="background:#FFF2F5; color:#FFA1B8; margin-top:20px;" onclick="triggerResetSystemEngine()">
+                <button class="btn-pastel-secondary" style="border-color:#EF4444; box-shadow:3px 3px 0px #EF4444; color:#EF4444; margin-top:20px;" onclick="triggerResetSystemEngine()">
                     <i class="fa-solid fa-power-off"></i> Reset Engine Parameters
                 </button>
             </div>
         </main>
 
         <div class="fab-group">
-            <button class="fab-btn fab-quick" onclick="openQuickTypeModal()" title="Ketik Cepat"><i class="fa-solid fa-pen-fancy"></i></button>
-            <button class="fab-btn fab-income" onclick="openTransactionModal('income')" title="Log Income"><i class="fa-solid fa-plus"></i></button>
-            <button class="fab-btn fab-expense" onclick="openTransactionModal('expense')" title="Log Expense"><i class="fa-solid fa-minus"></i></button>
+            <button class="fab-btn fab-quick" onclick="openQuickTypeModal()" title="Ketik Cepat"><span class="fab-emoji">✏️</span></button>
+            <button class="fab-btn fab-income" onclick="openTransactionModal('income')" title="Log Income"><span class="fab-emoji">💰</span></button>
+            <button class="fab-btn fab-expense" onclick="openTransactionModal('expense')" title="Log Expense"><span class="fab-emoji">−</span></button>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" id="nav-home" onclick="switchView('home')"><i class="fa-solid fa-house"></i><span>Home</span></div>
-            <div class="nav-item" id="nav-analytics" onclick="switchView('analytics')"><i class="fa-solid fa-chart-pie"></i><span>Charts</span></div>
-            <div class="nav-item" id="nav-wallet" onclick="switchView('wallet')"><i class="fa-solid fa-wallet"></i><span>Wallet</span></div>
-            <div class="nav-item" id="nav-budget" onclick="switchView('budget')"><i class="fa-solid fa-bookmark"></i><span>Budget</span></div>
-            <div class="nav-item" id="nav-history" onclick="switchView('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></div>
-            <div class="nav-item" id="nav-settings" onclick="switchView('settings')"><i class="fa-solid fa-gear"></i><span>Settings</span></div>
+            <div class="nav-item active" id="nav-home" onclick="switchView('home')">
+                <div class="nav-icon">🏠</div>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" id="nav-analytics" onclick="switchView('analytics')">
+                <div class="nav-icon">📊</div>
+                <span>Charts</span>
+            </div>
+            <div class="nav-item" id="nav-wallet" onclick="switchView('wallet')">
+                <div class="nav-icon">👛</div>
+                <span>Wallet</span>
+            </div>
+            <div class="nav-item" id="nav-budget" onclick="switchView('budget')">
+                <div class="nav-icon">🎯</div>
+                <span>Budget</span>
+            </div>
+            <div class="nav-item" id="nav-history" onclick="switchView('history')">
+                <div class="nav-icon">🕐</div>
+                <span>History</span>
+            </div>
+            <div class="nav-item" id="nav-settings" onclick="switchView('settings')">
+                <div class="nav-icon">⚙️</div>
+                <span>Settings</span>
+            </div>
         </nav>
 
         <div class="modal-overlay" id="modal-edit-balance" onclick="closeActiveModal(event)">
@@ -1041,7 +1229,7 @@
                 </div>
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
                     <span style="font-size: 24px; font-weight:800; color: var(--text-main);">¥</span>
-                    <input type="number" id="form-edit-balance-input" style="border:none; border-bottom:2px solid var(--pastel-purple); font-size:32px; font-weight:800; width:70%; text-align:center; outline:none; color:var(--text-main);">
+                    <input type="number" id="form-edit-balance-input" style="border:none; border-bottom:3px solid #ccff00; font-size:32px; font-weight:800; width:70%; text-align:center; outline:none; color:#171717; font-family:'Space Grotesk',sans-serif; background:transparent;">
                 </div>
                 <button class="btn-pastel-primary" onclick="handleSaveDirectBalance()">Overwrite Balance Amount</button>
             </div>
@@ -1058,7 +1246,7 @@
                     <label>Potong Dari Wallet Mana?</label>
                     <select id="quick-wallet-select" class="select-pastel"></select>
                 </div>
-                <button class="btn-pastel-primary" style="background: linear-gradient(135deg, #A2BFFF 0%, #C2B0FF 100%); margin-top:10px;" onclick="executeQuickNlpDetection()">
+                <button class="btn-pastel-primary" style="background: #ccff00; margin-top:10px;" onclick="executeQuickNlpDetection()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Deteksi & Proses Transaksi
                 </button>
             </div>
@@ -1138,7 +1326,7 @@
                 </div>
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
                     <span style="font-size: 24px; font-weight:800; color: var(--text-main);">¥</span>
-                    <input type="number" id="tx-amount" placeholder="0" style="border:none; border-bottom:2px solid var(--pastel-purple); font-size:32px; font-weight:800; width:60%; text-align:center; outline:none; color:var(--text-main);">
+                    <input type="number" id="tx-amount" placeholder="0" style="border:none; border-bottom:3px solid #ccff00; font-size:32px; font-weight:800; width:60%; text-align:center; outline:none; color:#171717; font-family:'Space Grotesk',sans-serif; background:transparent;">
                 </div>
                 <div class="form-group">
                     <label id="tx-wallet-label">Target Wallet Pool Source</label>
@@ -1394,6 +1582,9 @@
             const targetView = document.getElementById(`view-${viewTarget}`);
             const currentActiveView = document.querySelector('.app-view.view-active');
             
+            // Set per-view color on body
+            document.body.setAttribute('data-view', viewTarget);
+
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${viewTarget}`);
             if(activeNav) activeNav.classList.add('active');
@@ -1459,7 +1650,7 @@
             if (appState.budgets.length === 0) {
                 walletCarousel.innerHTML = `
                     <div style="text-align:center; width:100%; font-size:13px; color:var(--text-sub); padding:10px 0;">
-                        Belum ada dompet aktif. <a href="#" onclick="switchView('wallet')" style="color:var(--pastel-purple); font-weight:700;">Buat Baru</a>
+                        Belum ada dompet aktif. <a href="#" onclick="switchView('wallet')" style="color:#99cc00; font-weight:800; border-bottom:2px solid #99cc00;">Buat Baru</a>
                     </div>`;
             } else {
                 appState.budgets.forEach(w => {
@@ -1475,7 +1666,7 @@
                             <div class="dash-wallet-glow"></div>
                             <div class="dash-wallet-content">
                                 <div class="dash-wallet-top">
-                                    <div class="premium-fintech-badge" style="--badge-glow-color: ${w.color}60; --badge-gradient-start: #ffffff; --badge-gradient-end: ${w.color}35; --badge-icon-color: ${w.color}; border-color: ${w.color}40;">
+                                    <div class="premium-fintech-badge" style="background: ${w.color || '#ccff00'}; border:2.5px solid #171717; box-shadow:3px 3px 0px #171717; width:40px; height:40px; border-radius:12px; min-width:40px;">
                                         <div class="clay-3d-renderer">
                                             <div class="${activeVector === 'clay-3d-sparkles' ? 'clay-3d-sparkles' : 'clay-3d-object'}">
                                                 ${activeVector === 'clay-3d-sparkles' ? '✨' : `<div class="${activeVector}"></div>`}
@@ -1531,7 +1722,7 @@
                 const itemHtml = `
                     <div class="list-item" id="dash-tx-item-${tx.id}">
                         <div class="item-left">
-                            <div class="premium-fintech-badge" style="--badge-glow-color: ${catColor}50; --badge-gradient-start: #ffffff; --badge-gradient-end: ${catColor}40; --badge-icon-color: ${catColor}; border-color: ${catColor}50; width:46px; height:46px; border-radius:15px;">
+                            <div class="premium-fintech-badge" style="background: ${tx.type==='income'?'#22C55E':'#ccff00'}; width:46px; height:46px; border-radius:14px; border:2.5px solid #171717; box-shadow:3px 3px 0px #171717;">
                                 <div class="clay-3d-renderer">
                                     <div class="${currentIconClass === 'clay-3d-sparkles' ? 'clay-3d-sparkles' : 'clay-3d-object'}">
                                         ${currentIconClass === 'clay-3d-sparkles' ? '✨' : (currentIconClass === 'clay-3d-income' ? '<div class="clay-3d-income">↑</div>' : `<div class="${currentIconClass}"></div>`)}
@@ -1543,7 +1734,7 @@
                                 <p>${sourceWalletName} ${badgeMarkup} • ${new Date(tx.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}</p>
                             </div>
                         </div>
-                        <div class="item-amount" style="color:${tx.type === 'income' ? '#73D39C' : 'var(--text-main)'}">
+                        <div class="item-amount" style="color:${tx.type === 'income' ? '#16A34A' : '#EF4444'}; font-weight:800;">
                             ${tx.type === 'income' ? '+' : '-'}${formatCurrency(tx.amount)}
                         </div>
                     </div>`;
@@ -1573,7 +1764,7 @@
                     <div class="budget-item-card" id="wallet-card-${wallet.id}" style="--card-shadow: ${wallet.color}20">
                         <div class="budget-card-header">
                             <div class="budget-card-left">
-                                <div class="premium-fintech-badge" style="--badge-glow-color: ${wallet.color}60; --badge-gradient-start: #ffffff; --badge-gradient-end: ${wallet.color}40; --badge-icon-color: ${wallet.color}; border-color: ${wallet.color}50; width:48px; height:48px; border-radius:16px;">
+                                <div class="premium-fintech-badge" style="background: ${wallet.color || '#ccff00'}; width:48px; height:48px; border-radius:14px; border:2.5px solid #171717; box-shadow:3px 3px 0px #171717;">
                                     <div class="clay-3d-renderer">
                                         <div class="${vectorClass === 'clay-3d-sparkles' ? 'clay-3d-sparkles' : 'clay-3d-object'}">
                                             ${vectorClass === 'clay-3d-sparkles' ? '✨' : `<div class="${vectorClass}"></div>`}
@@ -1727,7 +1918,7 @@
                 }
 
                 container.insertAdjacentHTML('beforeend', `
-                    <div class="memo-budget-card" style="border-left-color: var(--pastel-pink);">
+                    <div class="memo-budget-card" style="border-left-color: #ccff00;">
                         <div>
                             <h5 style="font-size:14px; font-weight:800;">${memo.title}</h5>
                             <p style="font-size:13px; font-weight:700; color:var(--text-main); margin-top:2px;">${formatCurrency(memo.value)}</p>
@@ -1965,12 +2156,12 @@
             if(ctxPie) {
                 let labels = ["Main Balance Pool"];
                 let dataValues = [appState.mainBalance];
-                let backgroundColors = ["#C2B0FF"];
+                let backgroundColors = ["#ccff00"];
 
                 appState.budgets.forEach(w => {
                     labels.push(w.name);
                     dataValues.push(w.allocated);
-                    backgroundColors.push(w.color || "#FFD1E3");
+                    backgroundColors.push(w.color || "#22C55E");
                 });
 
                 if(pieChartInstance) pieChartInstance.destroy();
@@ -1978,303 +2169,8 @@
                     type: 'doughnut',
                     data: { 
                         labels: labels, 
-                        datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 6 }] 
+                        datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: '#171717', hoverOffset: 6 }] 
                     },
                     options: { 
                         responsive: true, maintainAspectRatio: false, cutout: '76%', 
-                        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11, family: 'Plus Jakarta Sans' }, color: '#433D52' } } }
-                    }
-                });
-            }
-
-            const ctxLine = document.getElementById('chartLine');
-            if(ctxLine) {
-                let timelineLabels = []; let dailyDataPoints = [];
-                let trackingDate = new Date(); trackingDate.setDate(trackingDate.getDate() - 6);
-                
-                for(let k=0; k<7; k++) {
-                    timelineLabels.push(trackingDate.getDate() + " " + trackingDate.toLocaleString('en-US', { month: 'short' }));
-                    let daySum = filteredTransactions
-                        .filter(t => t.type === 'expense' && new Date(t.date).toDateString() === trackingDate.toDateString())
-                        .reduce((sum, t) => sum + Number(t.amount), 0);
-                    dailyDataPoints.push(daySum);
-                    trackingDate.setDate(trackingDate.getDate() + 1);
-                }
-                
-                if(lineChartInstance) lineChartInstance.destroy();
-                lineChartInstance = new Chart(ctxLine.getContext('2d'), {
-                    type: 'line',
-                    data: { labels: timelineLabels, datasets: [{ label: 'Expense', data: dailyDataPoints, borderColor: '#C2B0FF', backgroundColor: 'rgba(194, 176, 255, 0.2)', borderWidth: 3, tension: 0.3, fill: true }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
-            }
-        }
-
-        function renderHistoryView() {
-            const search = document.getElementById('history-search').value.toLowerCase();
-            const filterCat = document.getElementById('history-filter-category').value;
-            const periodSelect = document.getElementById('history-period-select');
-            const targetPeriod = periodSelect ? periodSelect.value : getCurrentSystemPeriodKey();
-
-            const list = document.getElementById('history-master-list');
-            list.innerHTML = '';
-
-            let filtered = appState.transactions.filter(t => {
-                let matchesSearch = t.note.toLowerCase().includes(search) || t.amount.toString().includes(search);
-                let matchesCat = filterCat ? (t.categoryId === filterCat) : true;
-                let matchesPeriod = getTransactionPeriodKey(t.date) === targetPeriod;
-                return matchesSearch && matchesCat && matchesPeriod;
-            });
-
-            let periodIncome = filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
-            let periodExpense = filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0);
-            
-            document.getElementById('history-period-summary').innerHTML = `
-                <span style="color:#73D39C;">Income: ${formatCurrency(periodIncome)}</span>
-                <span style="color:#FFA1B8;">Expense: ${formatCurrency(periodExpense)}</span>
-            `;
-
-            if(filtered.length === 0) {
-                list.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--text-sub); padding:10px 0;">No logs in this period.</p>';
-                return;
-            }
-
-            filtered.reverse().forEach((tx, i) => {
-                let sourceW = appState.budgets.find(w => w.id === tx.walletId);
-                let walletLabel = sourceW ? sourceW.name : "Main Pool";
-                let catColor = "#BBE2FF";
-                let vectorIcon = sourceW ? (iconVectorMap[sourceW.iconClass] || "clay-3d-wallet") : "clay-3d-cash";
-                let badgeMarkup = '';
-
-                if(tx.type === 'expense') {
-                    let mc = appState.categories.find(c => c.id === tx.categoryId);
-                    if(mc) { 
-                        catColor = mc.color; 
-                        vectorIcon = iconVectorMap[mc.iconClass] || "clay-3d-cash";
-                        badgeMarkup = `
-                            <span class="premium-capsule-tag" style="--tag-bg: ${catColor}25; --tag-color: var(--text-main); --tag-border: ${catColor}60; margin-left: 6px;">
-                                ${mc.name}
-                            </span>
-                        `;
-                    }
-                } else {
-                    catColor = "#CAFFDF"; vectorIcon = "clay-3d-income";
-                }
-
-                const itemHtml = `
-                    <div class="list-item" id="tx-item-${tx.id}">
-                        <div class="item-left">
-                            <div class="premium-fintech-badge" style="--badge-glow-color: ${catColor}40; background: linear-gradient(135deg, #ffffff 0%, ${catColor}35 100%); --badge-icon-color: ${catColor}; border-color: ${catColor}40; width:44px; height:44px; border-radius:14px;">
-                                <div class="clay-3d-renderer">
-                                    <div class="${vectorIcon === 'clay-3d-sparkles' ? 'clay-3d-sparkles' : 'clay-3d-object'}">
-                                        ${vectorIcon === 'clay-3d-sparkles' ? '✨' : (vectorIcon === 'clay-3d-income' ? '<div class="clay-3d-income">↑</div>' : `<div class="${vectorIcon}"></div>`)}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item-info">
-                                <h5>${tx.note}</h5>
-                                <p>${walletLabel} ${badgeMarkup} • ${new Date(tx.date).toLocaleDateString('id-ID')}</p>
-                            </div>
-                        </div>
-                        <div class="item-right-side">
-                            <div class="item-amount" style="color:${tx.type==='income'?'#73D39C':'var(--text-main)'}">
-                                ${tx.type==='income'?'+':'-'}${formatCurrency(tx.amount)}
-                            </div>
-                            <button class="budget-action-icon-btn delete-trigger" onclick="triggerTxDeleteConfirmation('${tx.id}')"><i class="fa-solid fa-trash-can" style="font-size:10px;"></i></button>
-                        </div>
-                    </div>`;
-                list.insertAdjacentHTML('beforeend', itemHtml);
-                requestAnimationFrame(() => { setTimeout(() => { document.getElementById(`tx-item-${tx.id}`).classList.add('item-enter-active'); }, i * 15); });
-            });
-        }
-
-        function triggerTxDeleteConfirmation(txId) { pendingDeleteTxId = txId; document.getElementById('confirm-delete-tx-dialog').classList.add('active'); }
-        function closeConfirmTxDelete() { document.getElementById('confirm-delete-tx-dialog').classList.remove('active'); }
-
-        document.getElementById('confirm-delete-tx-execute-btn').onclick = () => {
-            const targetEl = document.getElementById(`tx-item-${pendingDeleteTxId}`);
-            closeConfirmTxDelete();
-            if(targetEl) {
-                targetEl.classList.remove('item-enter-active');
-                targetEl.classList.add('item-leave-active');
-                setTimeout(() => {
-                    const idx = appState.transactions.findIndex(t => t.id === pendingDeleteTxId);
-                    if(idx !== -1) {
-                        const tx = appState.transactions[idx];
-                        if(tx.type === 'expense') {
-                            if(tx.walletId === 'main') appState.mainBalance += tx.amount;
-                            else { let w = appState.budgets.find(x => x.id === tx.walletId); if(w) w.allocated += tx.amount; }
-                        } else {
-                            if(tx.walletId === 'main') appState.mainBalance -= tx.amount;
-                            else { let w = appState.budgets.find(x => x.id === tx.walletId); if(w) w.allocated -= tx.amount; }
-                        }
-                        appState.transactions.splice(idx, 1);
-                        saveToStorage(); renderHistoryView();
-                    }
-                }, 200);
-            }
-        };
-
-        function renderSettingsCategoryManager() {
-            const container = document.getElementById('settings-category-list-container');
-            if (container) {
-                container.innerHTML = '';
-                appState.categories.forEach(cat => {
-                    container.insertAdjacentHTML('beforeend', `
-                        <div style="display:flex; justify-content:between; align-items:center; background:#FAF9FE; padding:10px 14px; border-radius:12px; margin-bottom:8px; border:1px solid rgba(158,148,178,0.1);">
-                            <div style="display:flex; align-items:center; gap:10px; width:80%;">
-                                <div style="width:14px; height:14px; border-radius:4px; background:${cat.color}"></div>
-                                <span style="font-size:13px; font-weight:700;">${cat.name}</span>
-                            </div>
-                            <button class="budget-action-icon-btn delete-trigger" onclick="deleteCategoryFromSettings('${cat.id}')"><i class="fa-solid fa-trash-can" style="font-size:11px;"></i></button>
-                        </div>
-                    `);
-                });
-            }
-        }
-
-        function createNewCategoryFromSettings() {
-            const input = document.getElementById('new-category-input-name');
-            const name = input.value.trim();
-            if(!name) return;
-            const id = "c_" + Date.now();
-            const color = presetColors[Math.floor(Math.random() * presetColors.length)];
-            const icon = presetIconsList[Math.floor(Math.random() * presetIconsList.length)];
-            appState.categories.push({ id, name, color, iconClass: icon });
-            input.value = ''; saveToStorage(); renderHeaderUI(); renderSettingsCategoryManager();
-        }
-
-        function deleteCategoryFromSettings(id) {
-            if(appState.categories.length <= 1) { alert("Minimal harus menyisakan 1 kategori mendasar."); return; }
-            appState.categories = appState.categories.filter(c => c.id !== id);
-            saveToStorage(); renderHeaderUI(); renderSettingsCategoryManager();
-        }
-
-        function saveProfileSettings() {
-            const name = document.getElementById('settings-username').value.trim();
-            if(name) { 
-                appState.user = name; 
-                saveToStorage(); 
-                renderHeaderUI(); 
-                alert("Profile Updated Successfully!"); 
-            }
-        }
-
-        function buildFormPalettes() {
-            const colorGrid = document.getElementById('form-color-grid');
-            if(colorGrid) {
-                colorGrid.innerHTML = presetColors.map(c => `<div class="color-dot-option" data-color="${c}" style="background:${c};"></div>`).join('');
-                colorGrid.addEventListener('click', (e) => {
-                    const dot = e.target.closest('.color-dot-option');
-                    if(!dot) return;
-                    document.querySelectorAll('.color-dot-option').forEach(el => el.classList.remove('active'));
-                    dot.classList.add('active');
-                    selectedFormColor = dot.getAttribute('data-color');
-                });
-            }
-
-            const iconGrid = document.getElementById('form-icon-grid');
-            if(iconGrid) {
-                iconGrid.innerHTML = presetIconsList.map(i => `<div class="icon-box-option" data-icon="${i}"><i class="fa-solid ${i}"></i></div>`).join('');
-                iconGrid.addEventListener('click', (e) => {
-                    const box = e.target.closest('.icon-box-option');
-                    if(!box) return;
-                    document.querySelectorAll('.icon-box-option').forEach(el => el.classList.remove('active'));
-                    box.classList.add('active');
-                    selectedFormIcon = box.getAttribute('data-icon');
-                });
-            }
-        }
-
-        function openQuickTypeModal() {
-            document.getElementById('quick-input-text').value = '';
-            const sel = document.getElementById('quick-wallet-select');
-            sel.innerHTML = '<option value="main">Main Balance Pool</option>';
-            appState.budgets.forEach(w => {
-                sel.insertAdjacentHTML('beforeend', `<option value="${w.id}">${w.name}</option>`);
-            });
-            document.getElementById('modal-quick-type').classList.add('active');
-        }
-
-        function executeQuickNlpDetection() {
-            const text = document.getElementById('quick-input-text').value.trim();
-            const walletId = document.getElementById('quick-wallet-select').value;
-            if(!text) return;
-
-            const numMatch = text.match(/\d+/);
-            if(!numMatch) { alert("⚠️ Tidak mendeteksi nominal angka transaksi di dalam teks."); return; }
-            const detectedAmount = Number(numMatch[0]);
-
-            let cleanMemo = text.replace(numMatch[0], '').trim();
-            let finalCategory = appState.categories[0].id;
-
-            appState.categories.forEach(c => {
-                if(text.toLowerCase().includes(c.name.toLowerCase())) { finalCategory = c.id; }
-            });
-
-            if (walletId === 'main') {
-                if(appState.mainBalance < detectedAmount) { alert("⚠️ Saldo Main Pool tidak cukup!"); return; }
-                appState.mainBalance -= detectedAmount;
-            } else {
-                let wIdx = appState.budgets.findIndex(w => w.id === walletId);
-                if(wIdx !== -1) {
-                    if(appState.budgets[wIdx].allocated < detectedAmount) { alert("⚠️ Saldo Dompet terpilih tidak cukup!"); return; }
-                    appState.budgets[wIdx].allocated -= detectedAmount;
-                }
-            }
-
-            appState.transactions.push({
-                id: "tx_" + Date.now(),
-                type: 'expense',
-                amount: detectedAmount,
-                walletId: walletId,
-                categoryId: finalCategory,
-                note: cleanMemo || "Ketik Cepat Log",
-                date: new Date().toISOString()
-            });
-
-            saveToStorage(); closeAllModals(); renderDashboardView();
-        }
-
-        function toggleCustomCategoryField() {
-            const select = document.getElementById('tx-category-select');
-            const customInput = document.getElementById('tx-custom-category-input');
-            if(select.value === 'ADD_NEW_CUSTOM') { customInput.classList.remove('hidden'); customInput.focus(); }
-            else { customInput.classList.add('hidden'); }
-        }
-
-        function closeActiveModal(event) { if(event.target.classList.contains('modal-overlay')) closeAllModals(); }
-        function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
-
-        function backupDatabaseToJson() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `clarity_database_backup_${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor); downloadAnchor.click(); downloadAnchor.remove();
-        }
-
-        function triggerRestoreInputClick() { document.getElementById('restore-file-input').click(); }
-
-        function restoreDatabaseFromJson(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed.user && typeof parsed.mainBalance === 'number') {
-                        appState = parsed; saveToStorage(); initializeStorageEngine(); renderHeaderUI(); switchView('home'); alert("Database Restored Successfully!");
-                    } else { alert("Format berkas JSON tidak valid untuk engine Clarity."); }
-                } catch(err) { alert("Gagal membaca berkas JSON."); }
-            };
-            reader.readAsText(file);
-        }
-
-        function triggerResetSystemEngine() {
-            if(confirm("Apakah Anda yakin ingin melakukan reset total engine parameter? Semua riwayat saldo, catatan budget, dompet, dan logs transaksi akan terhapus permanen.")) {
-                localStorage.removeItem('clarity_envelope_engine_v6'); loadInitialDummyDataset(); renderHeaderUI(); switchView('home');
-            }
-        }
-    </script>
-</body>
-</html>
+                        plugins: { legend: { position: 'bottom', labels: { usePoi
